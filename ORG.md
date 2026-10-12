@@ -112,7 +112,7 @@ Full list has 16 principles [S5] P. The ones that map directly onto hackathon ju
 | Bedrock AgentCore | Serverless runtime + Identity, Memory, Browser, Code Interpreter, Gateway, Observability for production agents | GA in 2025; re:Invent 2025 added Policy (Cedar-based, intercepts Gateway tool calls) and Evaluations; Q2 2026 added Payments and Web Search; Aug 2026 open-sourced "Dogwood" temporal policy language for AgentCore | [S13] P, [S16] J, [S14][S10] P |
 | Strands Agents SDK | Open-source (Apache 2.0) agent SDK, Python + TypeScript; MCP and A2A support | Strands 1.0 (Python) added multi-agent primitives + A2A; TypeScript SDK 1.0 runs in Node.js and browser | [S17][S18] P |
 | Kiro | Spec-driven agentic IDE / coding agent | Q2 2026: available on iOS; usage tripled QoQ; positioned as ~50% more cost-effective | [S9][S10] P |
-| **Kiro Crew** — **VERIFIED, exists** | Open-source (Apache 2.0) persistent multi-agent workspace: shared memory, reusable skills, cron/webhook triggers, concurrent agents; runs on Kiro CLI and reads `.kiro` config | Announced/open-sourced **2026-08-04**; originated internally (reported codename MeshClaw); >39,000 internal Amazon builders, ~500 contributors in <6 months; repo `github.com/kirodotdev/kirocrew`; macOS/Linux/Windows; Slack/Telegram/Discord/WeCom integrations | [S19][S14] P, [S20][S21] J |
+| **Kiro Crew** — **VERIFIED, exists** | Open-source (Apache 2.0) persistent multi-agent workspace: shared memory, reusable skills, cron/webhook triggers, concurrent agents; runs on Kiro CLI and reads `.kiro` config | Announced/open-sourced **2026-08-04**; originated internally; >39,000 internal Amazon builders, ~500 contributors in <6 months; repo `github.com/kirodotdev/kirocrew`; macOS/Linux/Windows; Slack/Telegram/Discord/WeCom integrations | [S19][S14] P, [S20][S21] J |
 | Amazon SageMaker AI | Jassy: lets companies "build their own foundation models" on proprietary data | Q2 2026 call | [S10] P |
 | Amazon Nova 2 / Nova Forge | Nova 2 model family; Nova Forge for custom training ("Novellas") | re:Invent 2025 | [S22] J |
 | Amazon Quick | Agentic "work companion" | Apr 2026: desktop app, free/plus tiers; Q2 2026: background autonomous agents | [S15][S9] P |
@@ -419,7 +419,6 @@ Judging criteria are equally weighted [S2]; friction log adds up to +10% [S2]. C
 |---|---|
 | Jassy letter Alexa+ stats ("talking twice as much", +25% music, +50% smart home) and FY2025 financials ($717B revenue etc.) | Extracted via automated summary of [S7]; re-read the letter before quoting |
 | Fire TV devices sold: 300M+ [S35] vs 200M+ [S36] | Two official pages disagree; the Amazon Ads page is likely older |
-| Kiro Crew internal codename "MeshClaw" | Journalistic only [S20]; not seen on kiro.dev |
 | Panay "Leo is the invisible thread" / late-2027 Echo+Ring integration | Web-tier aggregator only [S29]; CNBC primary article returned 403 |
 | Panay "entry, core, signature" tiers | Web-tier only [S30] |
 | "Vega OS will power all future SMPs" | From Amazon Developer X post (search snippet) [S37]; not fetched directly |
