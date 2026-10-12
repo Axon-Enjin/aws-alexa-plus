@@ -2,7 +2,7 @@
 
 > Scope: stated mission, goals, and current strategic priorities of every organization tied to
 > `amazonappdev2026.devpost.com`, and what each one implies for a hackathon entrant.
-> **Retrieval date for all sources: 2026-09-28.** agent mode report: sourced facts are tagged `[Sn]`
+> **Retrieval date for all sources: 2026-09-28.** research mode report: sourced facts are tagged `[Sn]`
 > (see Source List). Anything tagged **[Inference]** is my own reading, not a sourced claim.
 >
 > **Source tiers:** P = Primary (official Amazon/AWS/org pages, rules, blogs, filings) ·
