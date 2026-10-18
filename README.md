@@ -64,7 +64,7 @@ Track repo for the Amazon Developer Hackathon. This folder is the whole project:
 
 ## Recommended build
 
-**CareSync Orchestrator** — a voice agent that remembers a family care plan and acts on appointments, routines, and the home. Rubric total 33, ahead of ClaimFighter (26) and CareCart (25).
+**CareSync Orchestrator:** a voice agent that remembers a family care plan and acts on appointments, routines, and the home. Rubric total 33, ahead of ClaimFighter (26) and CareCart (25).
 
 The report's transaction SOM is about $47.5M. A separate subscription view is about $9M ARR. Those are different claims. ClaimFighter becomes the better build only if insurers expose a claims API. The main risks are protected health information and fragmented calendars and devices.
 
