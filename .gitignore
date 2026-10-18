@@ -7,3 +7,4 @@ data/
 .mypy_cache/
 *.egg-info/
 .vercel/
+cockpit.html
