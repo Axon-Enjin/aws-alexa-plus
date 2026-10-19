@@ -6,7 +6,7 @@ import caresync.store as store
 from caresync.browser_state import current, decode, empty, encode, install, uninstall
 from caresync.orchestrator import compose, plan
 from caresync.policy import decide, policy_text
-from caresync.tools import confirm_action, propose_action, read_telemetry
+from caresync.tools import confirm_action, get_task, propose_action, read_calendar, read_telemetry, start_visit_packet, update_appointment
 
 
 class PolicyTests(unittest.TestCase):
@@ -28,16 +28,22 @@ class PolicyTests(unittest.TestCase):
 class PlanTests(unittest.TestCase):
     def test_hero_questions(self):
         self.assertEqual(plan("What's going on with Mom today?"), "status")
+        self.assertEqual(plan("How is Elena today?"), "status")
+        self.assertEqual(plan("Did she take her pills?"), "meds")
         self.assertEqual(plan("Remind her on the kitchen Show"), "remind")
         self.assertEqual(plan("Yes, send it"), "confirm")
         self.assertEqual(plan("Order the usual briefs"), "order")
         self.assertEqual(plan("Yes, place the order"), "confirm")
         self.assertEqual(plan("No, leave it"), "cancel")
         self.assertEqual(plan("When is cardiology?"), "calendar")
+        self.assertEqual(plan("Mom's cardiologist moved to Thursday at 2"), "update_visit")
+        self.assertEqual(plan("Get me ready for Thursday"), "packet")
         self.assertEqual(plan("What did we decide yesterday?"), "memory")
 
     def test_yes_inside_a_real_question_is_not_confirmation(self):
         self.assertEqual(plan("Yes we should check on Mom"), "status")
+        self.assertEqual(plan("Yes we should check on Mom", has_token=True), "status")
+        self.assertEqual(plan("Yes, when is cardiology?", has_token=True), "calendar")
 
 
 class StoreTests(unittest.TestCase):
@@ -93,6 +99,34 @@ class StoreTests(unittest.TestCase):
             self.assertEqual(roundtrip["supply_days"]["briefs"], 30)
         finally:
             uninstall(token)
+
+    def test_spoken_move_is_what_the_next_session_reads(self):
+        import json
+
+        saved = json.loads(update_appointment(3, 14, 0))
+        self.assertIn("Thursday", saved["appointment"]["when_label"])
+        later = json.loads(read_calendar())
+        self.assertIn("Thursday", later["appointment"]["when_label"])
+        self.assertIn("2:00 PM", later["appointment"]["when_label"])
+
+    def test_other_household_is_refused(self):
+        denied = read_calendar(resident_id="hh_other")
+        self.assertIn("denied", denied)
+        self.assertNotIn("Patel", denied)
+
+    def test_visit_packet_finishes_with_meds_and_questions(self):
+        import json
+        import time
+
+        update_appointment(3, 14, 0)
+        started = json.loads(start_visit_packet())
+        self.assertEqual(started["status"], "running")
+        time.sleep(1.6)
+        finished = json.loads(get_task(started["task_id"]))
+        self.assertEqual(finished["status"], "completed")
+        self.assertIn("Lisinopril", finished["result"])
+        self.assertIn("Questions", finished["result"])
+        self.assertIn("Thursday", finished["result"])
 
     def test_telemetry_is_specific(self):
         payload = read_telemetry()

@@ -1,0 +1,12 @@
+{
+  "method": "built-in image_gen",
+  "purpose": "Generic representative thumbnails for approved conversation composition C; no branded product identity is asserted.",
+  "assets": {
+    "supply-brief.png": {
+      "prompt": "Use case: product-mockup. Asset type: small caregiver web app supply thumbnail. A single neutral unbranded adult protective pull-up underwear brief, front view, isolated on transparent background. White absorbent material with very pale gray side seams and elastic waistband; subtle natural studio shading for legibility when displayed at 48 pixels. Centered full object with generous clear alpha margin, no cropping. Clean dignified catalog product cutout. No person, body, skin, packaging, letters, logos, brand marks, badges, decorative elements, or watermark. This is generic representative supply imagery, not a specific commercial product."
+    },
+    "kitchen-display.png": {
+      "prompt": "Use case: product-mockup. Asset type: small caregiver web app kitchen display thumbnail. A single neutral unbranded compact smart home display, isolated on transparent background. Slight three-quarter front view, nearly square landscape dark charcoal screen with soft gray bezel and a small wedge-shaped tabletop stand. Screen is inactive dark slate gray with one subtle reflected highlight, absolutely no interface or text. Clean dignified catalog product cutout, soft natural studio shading, clear silhouette readable at 40 pixels. Centered full object with generous clear alpha margin, no cropping. No room, person, logos, letters, brand marks, icons, decorative elements, or watermark. This is a generic representative smart display, not a branded commercial device."
+    }
+  }
+}

@@ -41,13 +41,21 @@ def plan(utterance: str, *, has_token: bool = False) -> str:
             return "cancel"
     if _AFFIRM.match(text):
         rest = _AFFIRM.sub("", text).strip(" ,.!")
-        if has_token or rest in _AFFIRM_REST:
+        if rest in _AFFIRM_REST:
             return "confirm"
+    if re.search(r"\b(get me ready|visit packet|prep packet|ready for)\b", text):
+        return "packet"
+    if re.search(r"\b(moved|move|reschedule|changed|change)\b", text) and re.search(
+        r"\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b", text
+    ):
+        return "update_visit"
     if re.search(r"\b(order|reorder|buy)\b", text):
         return "order"
     if re.search(r"\b(brief|briefs|pads|underwear|supplies|supply|stock|inventory)\b", text):
         return "inventory"
-    if re.search(r"\b(remind|echo|show|kitchen)\b", text):
+    if re.search(r"\b(pill|pills|meds|medication|medications|dose|doses|dispenser)\b", text):
+        return "meds"
+    if re.search(r"\b(remind|echo|show)\b", text):
         return "remind"
     if re.search(r"\b(yesterday|remember|memory|decide|decided|last time)\b", text):
         return "memory"
@@ -121,19 +129,29 @@ def _calls(
         ]
     if intent == "order":
         return [
-            ("check_inventory", {**base, "item_query": "briefs"}),
+            ("check_inventory", {**base, "item_query": utterance}),
             ("propose_action", {**base, "kind": "order_supply", "session_id": session_id}),
         ]
     if intent == "inventory":
         return [("check_inventory", {**base, "item_query": utterance})]
+    if intent == "update_visit":
+        parsed = _parse_move(utterance)
+        if parsed is None:
+            return [("read_calendar", base)]
+        weekday, hour, minute = parsed
+        return [("update_appointment", {**base, "weekday": weekday, "hour": hour, "minute": minute})]
+    if intent == "packet":
+        return [("start_visit_packet", base)]
     if intent == "remind":
         return [("propose_action", {**base, "kind": "remind_show", "session_id": session_id})]
     if intent == "memory":
         return [("recall_memory", base)]
     if intent == "calendar":
         return [("read_calendar", base), ("recall_memory", base)]
+    if intent == "meds":
+        return [("read_telemetry", base)]
     if intent == "help":
-        return []
+        return [("read_telemetry", base)]
     return [
         ("recall_memory", base),
         ("read_telemetry", base),
@@ -141,6 +159,25 @@ def _calls(
         ("read_routines", base),
         ("check_inventory", {**base, "item_query": ""}),
     ]
+
+
+def _parse_move(utterance: str) -> tuple[int, int, int] | None:
+    text = utterance.lower()
+    day = re.search(r"\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b", text)
+    clock_match = re.search(r"\bat\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b", text)
+    if day is None or clock_match is None:
+        return None
+    hour = int(clock_match.group(1))
+    minute = int(clock_match.group(2) or 0)
+    meridian = clock_match.group(3)
+    if meridian == "pm" and hour < 12:
+        hour += 12
+    elif meridian == "am" and hour == 12:
+        hour = 0
+    elif meridian is None and 1 <= hour <= 7:
+        hour += 12
+    weekday = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].index(day.group(1))
+    return weekday, hour, minute
 
 
 def compose(intent: str, results: dict[str, Any], utterance: str) -> tuple[str, list[dict[str, Any]]]:
@@ -152,19 +189,20 @@ def compose(intent: str, results: dict[str, Any], utterance: str) -> tuple[str, 
         )
 
     if intent == "help":
+        name = ((results.get("read_telemetry") or {}).get("resident") or "this household").split()[0]
         return (
-            "I keep Elena's day in one place. Ask what's going on, ask me to remind her on the kitchen Show, "
-            "or ask about the briefs. I won't send anything or place an order until you confirm it.",
-            [
-                {
-                    "kind": "prompt",
-                    "title": "Try one",
-                    "body": "What's going on with Mom today?",
-                    "tone": "info",
-                    "action": {"label": "Ask", "utterance": "What's going on with Mom today?"},
-                }
-            ],
+            f"I can read {name}'s medicines, the next visit, and what is running low. "
+            "I will not send a reminder or place an order until you confirm it.",
+            [],
         )
+
+    if intent == "meds":
+        tele = results.get("read_telemetry") or {}
+        meds = tele.get("meds") or []
+        if not meds:
+            return ("I don't have a medication list for this household.", [])
+        speech = ". ".join(f"{med['name']} {med['dose']} is {med['status']}" for med in meds) + "."
+        return speech, [_meds_card(meds)]
 
     if intent == "confirm":
         payload = results.get("confirm_action", {})
@@ -254,6 +292,34 @@ def compose(intent: str, results: dict[str, Any], utterance: str) -> tuple[str, 
             for note in notes[:3]
         ]
         return speech, cards
+
+    if intent == "update_visit":
+        saved = (results.get("update_appointment") or {}).get("appointment") or {}
+        if not saved:
+            return ("I didn't catch a weekday and a time. Try Thursday at 2.", [])
+        speech = (
+            f"Saved. Cardiology with {saved.get('clinician', 'the clinic')} "
+            f"is now {saved.get('when_label', 'the new time')}."
+        )
+        return speech, [_visit_card(saved)]
+
+    if intent == "packet":
+        started = results.get("start_visit_packet") or {}
+        if not started.get("ok"):
+            return (started.get("reason", "I couldn't start the visit packet."), [])
+        when = started.get("when_label", "the visit")
+        return (
+            f"I'm putting the packet together for {when}. It will list the medications, how today went, and what to ask.",
+            [
+                {
+                    "kind": "packet",
+                    "title": "Visit packet",
+                    "body": "Gathering medications, adherence, notes, and questions.",
+                    "tone": "info",
+                    "task_id": started.get("task_id"),
+                }
+            ],
+        )
 
     if intent == "calendar":
         appointment = (results.get("read_calendar") or {}).get("appointment") or {}

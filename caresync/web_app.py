@@ -18,7 +18,7 @@ from starlette.routing import Route
 from caresync import tools
 from caresync.browser_state import cookie_header, current, decode, install, uninstall
 from caresync.orchestrator import handle_turn
-from caresync.store import household, reset_db
+from caresync.store import find_pending, household, reset_db
 
 WEB = Path(__file__).resolve().parent / "web"
 
@@ -33,6 +33,10 @@ async def css(_: Request) -> FileResponse:
 
 async def js(_: Request) -> FileResponse:
     return FileResponse(WEB / "app.js", media_type="text/javascript")
+
+
+async def image(request: Request) -> FileResponse:
+    return FileResponse(WEB / request.url.path.rsplit("/", 1)[-1], media_type="image/png")
 
 
 async def health(_: Request) -> JSONResponse:
@@ -71,6 +75,9 @@ async def turn(request: Request) -> JSONResponse:
     )
     payload["protocol"] = "in-process"
     payload["transport"] = "vercel"
+    payload["household"] = household()
+    pending = find_pending(session_id)
+    payload["pending_action"] = {"token": pending["token"], "kind": pending["kind"]} if pending else None
     return JSONResponse(payload)
 
 
@@ -111,6 +118,8 @@ def build_web_app() -> Starlette:
             Route("/", index),
             Route("/assets/app.css", css),
             Route("/assets/app.js", js),
+            Route("/assets/supply-brief.png", image),
+            Route("/assets/kitchen-display.png", image),
             Route("/api/health", health),
             Route("/api/board", board),
             Route("/api/reset", reset, methods=["POST"]),

@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "caresync/web/index.html"
+        ],
+        "createdAt": "2026-10-19T03:52:34.483Z",
+        "reason": "Agent verified false positive: detector cannot resolve server-mapped /assets/app.css and reports all roles as 16px. Actual desktop CSS sets h1 to 27px, sidebar h2 to 24.75px, and message body to 16.875px; largest heading/body ratio is 1.60. Retain the approved composition C hierarchy."
+      }
+    ]
+  }
+}

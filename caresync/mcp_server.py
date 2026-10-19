@@ -14,7 +14,7 @@ from starlette.responses import FileResponse, JSONResponse
 
 from caresync import tools
 from caresync.orchestrator import handle_turn, parse_tool_result
-from caresync.store import household, init_db, reset_db
+from caresync.store import find_pending, household, init_db, reset_db
 
 WEB = Path(__file__).resolve().parent / "web"
 READ_ONLY = ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False)
@@ -68,6 +68,22 @@ def build_mcp(port: int) -> FastMCP:
     ) -> str:
         """Days of each supply left, and the usual listing a caregiver would reorder."""
         return tools.check_inventory(item_query, actor_id, resident_id)
+
+    @mcp.tool(annotations=STAGED)
+    def update_appointment(
+        weekday: int,
+        hour: int,
+        minute: int,
+        actor_id: str = "maya-reyes",
+        resident_id: str = "elena-reyes",
+    ) -> str:
+        """Save a spoken visit change and read the new time back."""
+        return tools.update_appointment(weekday, hour, minute, actor_id, resident_id)
+
+    @mcp.tool(annotations=READ_ONLY)
+    def start_visit_packet(actor_id: str = "maya-reyes", resident_id: str = "elena-reyes") -> str:
+        """Start a visit-prep packet. Poll get_task until it finishes."""
+        return tools.start_visit_packet(actor_id, resident_id)
 
     @mcp.tool(annotations=STAGED)
     def propose_action(
@@ -132,6 +148,11 @@ def build_mcp(port: int) -> FastMCP:
     async def js(_: Request) -> FileResponse:
         return FileResponse(WEB / "app.js", media_type="text/javascript")
 
+    @mcp.custom_route("/assets/supply-brief.png", methods=["GET"])
+    @mcp.custom_route("/assets/kitchen-display.png", methods=["GET"])
+    async def image(request: Request) -> FileResponse:
+        return FileResponse(WEB / request.url.path.rsplit("/", 1)[-1], media_type="image/png")
+
     @mcp.custom_route("/api/health", methods=["GET"])
     async def health(_: Request) -> JSONResponse:
         return JSONResponse({"ok": True, "mcp": mcp_url, "service": "caresync"})
@@ -173,6 +194,9 @@ def build_mcp(port: int) -> FastMCP:
                 )
         payload["protocol"] = str(init.protocolVersion)
         payload["transport"] = "streamable-http"
+        payload["household"] = household()
+        pending = find_pending(session_id)
+        payload["pending_action"] = {"token": pending["token"], "kind": pending["kind"]} if pending else None
         return JSONResponse(payload)
 
     @mcp.custom_route("/api/task/{task_id}", methods=["GET"])

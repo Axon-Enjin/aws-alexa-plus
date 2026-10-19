@@ -19,7 +19,7 @@ _SECRET = os.environ.get("CARESYNC_SECRET", "caresync-demo-secret").encode()
 
 
 def empty() -> dict:
-    return {"pending": [], "memories": [], "supply_days": {}, "routines": {}, "tasks": []}
+    return {"pending": [], "memories": [], "supply_days": {}, "routines": {}, "tasks": [], "appointment": None}
 
 
 def active() -> bool:
