@@ -643,7 +643,7 @@ def apply_effect(kind: str, payload: dict) -> str:
             if kind == "order_supply":
                 supply_id = payload.get("supply_id", "briefs")
                 conn.execute(
-                    "UPDATE supplies SET days_left = days_left + 30, arrives = 'Tomorrow' WHERE id = ?",
+                    "UPDATE supplies SET days_left = days_left + 30 WHERE id = ?",
                     (supply_id,),
                 )
                 conn.commit()

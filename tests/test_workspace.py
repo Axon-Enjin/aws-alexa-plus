@@ -67,6 +67,28 @@ class WorkspaceTests(unittest.TestCase):
             self.assertTrue(response.content.startswith(b"\x89PNG"))
         self.assertEqual(self.client.get("/assets/asset-provenance.json").status_code, 404)
 
+    def test_reordering_strips_confirms_the_selected_item_only(self):
+        proposal = self.turn("Order Glucose test strips")
+        self.assertIn("$18.99", proposal["speech"])
+        self.assertNotIn("$42.18", proposal["speech"])
+        before = {item["id"]: item["days_left"] for item in proposal["household"]["supplies"]}
+        self.assertEqual(before, {"briefs": 4, "strips": 18})
+        confirmed = self.turn("Yes, place the order", proposal["pending_action"]["token"])
+        after = {item["id"]: item["days_left"] for item in confirmed["household"]["supplies"]}
+        self.assertEqual(after, {"briefs": 4, "strips": 48})
+        self.assertIn("glucose test strips", confirmed["speech"].lower())
+
+    def test_unknown_supply_does_not_stage_a_different_product(self):
+        reply = self.turn("Order mystery gloves")
+        self.assertIsNone(reply["pending_action"])
+        self.assertFalse(any(card.get("confirm") for card in reply["cards"]))
+        self.assertIn("Choose one supply", reply["speech"])
+
+    def test_invalid_appointment_time_keeps_existing_visit(self):
+        before = self.client.get("/api/board").json()["appointment"]
+        reply = self.turn("Move cardiology to Thursday at 25:99")
+        self.assertEqual(reply["household"]["appointment"], before)
+
 
 if __name__ == "__main__":
     unittest.main()

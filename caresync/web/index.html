@@ -84,7 +84,11 @@
     <a class="skip-link" href="#utterance">Skip to care assistant</a>
     <div class="app-shell">
       <nav class="rail" aria-label="CareSync">
-        <a class="brand-mark" href="/" aria-label="CareSync home"
+        <a
+          class="brand-mark"
+          href="#/home"
+          data-route="home"
+          aria-label="CareSync home"
           ><svg class="logo"><use href="#i-link" /></svg
         ></a>
         <div class="rail-links">
@@ -146,11 +150,7 @@
           </div>
         </div>
         <section class="context-section" id="medications-section">
-          <button
-            type="button"
-            class="section-link"
-            data-prompt="Did she take her medications?"
-          >
+          <button type="button" class="section-link" data-route="medications">
             <h3>Medications</h3>
             <svg><use href="#i-chevron" /></svg>
           </button>
@@ -159,11 +159,7 @@
           </div>
         </section>
         <section class="context-section" id="visit-section">
-          <button
-            type="button"
-            class="section-link"
-            data-prompt="When is the next appointment?"
-          >
+          <button type="button" class="section-link" data-route="calendar">
             <span class="section-title"
               ><svg><use href="#i-calendar" /></svg>
               <h3>Next visit</h3></span
@@ -172,11 +168,7 @@
           <div id="visit"><p class="muted">Loading the next visit…</p></div>
         </section>
         <section class="context-section" id="supplies-section">
-          <button
-            type="button"
-            class="section-link"
-            data-prompt="Check the supplies"
-          >
+          <button type="button" class="section-link" data-route="supplies">
             <span class="section-title"
               ><svg><use href="#i-box" /></svg>
               <h3>Supplies</h3></span
@@ -217,6 +209,16 @@
             <h1>Care assistant</h1>
           </div>
           <div class="header-actions">
+            <button
+              type="button"
+              class="secondary-button assistant-toggle"
+              id="assistant-toggle"
+              aria-controls="assistant-panel"
+              aria-expanded="false"
+              hidden
+            >
+              Care assistant
+            </button>
             <span class="simulator-badge"
               ><svg><use href="#i-link" /></svg
               ><span>Alexa+ simulator</span></span
@@ -230,72 +232,103 @@
             </button>
           </div>
         </header>
-        <div
-          class="conversation"
-          id="conversation"
-          tabindex="0"
-          aria-label="Care conversation"
-        >
-          <div class="day-divider">
-            <span>Today</span><time id="today-date"></time>
-          </div>
-          <div
-            class="messages"
-            id="log"
-            role="log"
-            aria-label="Conversation"
-            aria-live="polite"
-            aria-relevant="additions"
-          ></div>
-        </div>
-        <div class="composer-dock">
-          <div
-            class="connection-notice"
-            id="connection-notice"
-            role="status"
+        <nav class="view-navigation" aria-label="Care views">
+          <a href="#/home" data-route="home">Home</a>
+          <a href="#/medications" data-route="medications">Medications</a>
+          <a href="#/calendar" data-route="calendar">Calendar</a>
+          <a href="#/supplies" data-route="supplies">Supplies</a>
+          <a href="#/memory" data-route="memory">Memory</a>
+        </nav>
+        <div class="workspace-body">
+          <section
+            class="route-view"
+            id="route-view"
+            aria-label="Care view"
+            tabindex="-1"
             hidden
-          ></div>
-          <div class="chips" id="chips" aria-label="Suggested questions"></div>
-          <p class="composer-state" id="composer-state" role="status"></p>
-          <form class="composer" id="composer">
-            <label class="field"
-              ><span class="sr-only">Ask about Elena’s care</span
-              ><input
-                id="utterance"
-                name="utterance"
-                autocomplete="off"
-                maxlength="2000"
-                placeholder="Ask about Elena’s care…"
-                required
-            /></label>
-            <button
-              type="button"
-              class="icon-button mic-button"
-              id="mic"
-              aria-label="Ask by voice"
+          ></section>
+          <section
+            class="assistant-panel"
+            id="assistant-panel"
+            aria-label="Care assistant"
+          >
+            <h2 class="assistant-panel-title" tabindex="-1">Care assistant</h2>
+            <div
+              class="conversation"
+              id="conversation"
+              tabindex="0"
+              aria-label="Care conversation"
             >
-              <svg><use href="#i-mic" /></svg>
-            </button>
-            <button type="submit" class="send-button" aria-label="Send message">
-              <svg><use href="#i-send" /></svg>
-            </button>
-          </form>
-          <footer class="workspace-footer">
-            <p>
-              <svg><use href="#i-info" /></svg
-              ><span
-                >Actions need your confirmation. Orders are simulated.</span
-              >
-            </p>
-            <button type="button" id="reset">
-              Reset household <svg><use href="#i-reset" /></svg>
-            </button>
-          </footer>
-          <details class="technical-details">
-            <summary>Connection details</summary>
-            <p id="proto">Connecting to CareSync…</p>
-            <p id="trace"></p>
-          </details>
+              <div class="day-divider">
+                <span>Today</span><time id="today-date"></time>
+              </div>
+              <div
+                class="messages"
+                id="log"
+                role="log"
+                aria-label="Conversation"
+                aria-live="polite"
+                aria-relevant="additions"
+              ></div>
+            </div>
+            <div class="composer-dock">
+              <div
+                class="connection-notice"
+                id="connection-notice"
+                role="status"
+                hidden
+              ></div>
+              <div
+                class="chips"
+                id="chips"
+                aria-label="Suggested questions"
+              ></div>
+              <p class="composer-state" id="composer-state" role="status"></p>
+              <form class="composer" id="composer">
+                <label class="field"
+                  ><span class="sr-only">Ask about Elena’s care</span
+                  ><input
+                    id="utterance"
+                    name="utterance"
+                    autocomplete="off"
+                    maxlength="2000"
+                    placeholder="Ask about Elena’s care…"
+                    required
+                /></label>
+                <button
+                  type="button"
+                  class="icon-button mic-button"
+                  id="mic"
+                  aria-label="Ask by voice"
+                >
+                  <svg><use href="#i-mic" /></svg>
+                </button>
+                <button
+                  type="submit"
+                  class="send-button"
+                  aria-label="Send message"
+                >
+                  <svg><use href="#i-send" /></svg>
+                </button>
+              </form>
+              <footer class="workspace-footer">
+                <p>
+                  <svg><use href="#i-info" /></svg
+                  ><span
+                    >Actions need your confirmation. Orders are simulated.</span
+                  >
+                </p>
+                <button type="button" id="reset">
+                  Reset household <svg><use href="#i-reset" /></svg>
+                </button>
+              </footer>
+              <details class="technical-details">
+                <summary>Connection details</summary>
+                <p id="proto">Connecting to CareSync…</p>
+                <p id="trace"></p>
+              </details>
+            </div>
+          </section>
         </div>
       </main>
     </div>

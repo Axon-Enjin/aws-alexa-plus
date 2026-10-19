@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import secrets
 
 from caresync import policy
@@ -99,6 +100,24 @@ def read_routines(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDE
     return _dump({"ok": True, "resident_id": resident_id, "routines": home["routines"]})
 
 
+def _inventory_matches(items: list[dict], query: str) -> list[dict]:
+    """Resolve catalogue IDs/names before shared brand words. Never guess an unknown product."""
+    query = query.lower().strip()
+    generic = {"check", "the", "usual", "supplies", "supply", "order", "reorder", "buy", "please", "show", "me", "her", "mom", "elena", "inventory", "stock", "what", "is", "left", "view", "s", "are", "low", "running", "days", "how", "many", "we", "have", "any", "do", "on", "hand", "my", "our"}
+    if not query or not (set(re.findall(r"[a-z]+", query)) - generic):
+        return items
+    aliases = {"briefs": {"brief", "briefs", "pads", "underwear"}, "strips": {"strips", "strip", "glucose"}}
+    words = set(re.findall(r"[a-z]+", query))
+    specific = [item for item in items if item["name"].lower() in query or item["id"] in words or words & aliases.get(item["id"], set())]
+    if specific:
+        return specific
+    branded = [item for item in items if item["brand"].lower() in query]
+    if not branded:
+        return []
+    longest = max(len(item["brand"]) for item in branded)
+    return [item for item in branded if len(item["brand"]) == longest]
+
+
 def check_inventory(
     item_query: str = "",
     actor_id: str = policy.CAREGIVER_ID,
@@ -109,18 +128,7 @@ def check_inventory(
     if blocked:
         return blocked
     home = household()
-    items = home["supplies"]
-    query = item_query.lower().strip()
-    if query:
-        narrowed = [
-            item
-            for item in items
-            if item["id"] in query
-            or item["name"].lower() in query
-            or any(word in query for word in item["brand"].lower().split())
-        ]
-        if narrowed:
-            items = narrowed
+    items = _inventory_matches(home["supplies"], item_query)
     return _dump({"ok": True, "resident_id": resident_id, "items": items})
 
 
@@ -129,6 +137,7 @@ def propose_action(
     session_id: str,
     actor_id: str = policy.CAREGIVER_ID,
     resident_id: str = RESIDENT_ID,
+    item_query: str = "",
 ) -> str:
     """Stage a reminder or an order. Does not execute it. Returns a confirmation token."""
     blocked = _scope(resident_id) or _guard("propose", actor_id)
@@ -144,11 +153,17 @@ def propose_action(
         )
         payload = {"supply_id": None, "show": home["telemetry"]["echo_show"]["name"]}
     elif kind == "order_supply":
-        briefs = next(item for item in home["supplies"] if item["id"] == "briefs")
+        matches = _inventory_matches(home["supplies"], item_query)
+        generic_order = not item_query or not (set(re.findall(r"[a-z]+", item_query.lower())) - {"order", "reorder", "buy", "the", "usual", "supplies", "supply", "please"})
+        if generic_order:
+            matches = [item for item in home["supplies"] if item["id"] == "briefs"]
+        if len(matches) != 1:
+            return _dump({"ok": False, "status": "denied", "reason": "Choose one supply from the household list before ordering."})
+        item = matches[0]
         summary = (
-            f"{briefs['brand']} {briefs['name'].lower()}, {briefs['price']}, arrives {briefs['arrives'].lower()}."
+            f"{item['brand']} {item['name'].lower()}, {item['price']}, arrives {item['arrives'].lower()}."
         )
-        payload = {"supply_id": briefs["id"], "price": briefs["price"]}
+        payload = {"supply_id": item["id"], "price": item["price"]}
     else:
         return _dump({"ok": False, "status": "denied", "reason": f"unknown action kind {kind}"})
 
@@ -209,6 +224,8 @@ def update_appointment(
     blocked = _scope(resident_id) or _guard("propose", actor_id)
     if blocked:
         return blocked
+    if not (0 <= weekday <= 6 and 0 <= hour <= 23 and 0 <= minute <= 59):
+        return _denied("propose", "Choose a valid weekday and time for the visit.")
     saved = save_appointment(weekday, hour, minute)
     remember(f"Maya moved cardiology to {saved['when_label']}.", "update")
     return _dump({"ok": True, "appointment": saved})

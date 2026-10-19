@@ -213,6 +213,8 @@ Care sections use thin separators and vertical breathing room rather than nested
 
 The phone composer reserves the bottom safe area. Suggested questions form a horizontally scrolling row on phones. The context drawer has a backdrop, focus containment, Escape dismissal, and focus restoration; background controls are inert while it is open.
 
+Home retains this conversation layout. Category views replace the main content area with an independently scrolling care record, using (32px) padding on desktop and (25px 18px) on phones. At widths of at least (1300px), the shared assistant opens beside the category in a (380px) panel and can be hidden. Below (1300px), it opens in place of the category; “Back to view” restores the category. Category navigation resets this assistant visibility according to the current breakpoint. At widths up to (600px), a horizontally scrolling navigation row below the header keeps all five views accessible when the rail is hidden.
+
 ## Elevation & Depth
 
 The implemented system has no box shadows. Depth comes from the dark rail, cool context panel, lavender conversation field, and white foreground surfaces. Thin borders identify boundaries and the pending confirmation. The drawer uses a translucent plum backdrop (#22153066), not a shadow.
@@ -235,7 +237,21 @@ Keyboard focus is a (3px) Focus Lavender outline offset by (4px). Button color, 
 
 ### Navigation
 
-A persistent deep-plum rail uses icon-over-label tiles. Selection uses a pale lavender tile and plum text; hover uses the darker rail tone. Labels and selected state remain explicit. At the phone breakpoint the rail disappears, with care context available through the header control.
+A persistent deep-plum rail uses icon-over-label tiles. Selection uses a pale lavender tile and plum text; hover uses the darker rail tone. Labels and selected state remain explicit. At the phone breakpoint the rail disappears, with care context available through the header control and category links available in the horizontal navigation row. Both navigation variants identify the current view with `aria-current="page"`.
+
+Home, Medications, Calendar, Supplies, and Memory use `#/home`, `#/medications`, `#/calendar`, `#/supplies`, and `#/memory`. Direct links and browser Back/Forward select the same views; an empty or unknown route resolves to Home. Navigation updates the header and document title without replacing the shared conversation, unsent composer text, pending confirmation, or asynchronous visit task. Medication filtering and appointment form drafts also survive view changes within the loaded page.
+
+### Category records and assistant access
+
+Category content extends the same flat surfaces, thin dividers, semantic status labels, and compact controls. Category headings use (1.625rem) type with weight (650), tracking (-0.03em), and line height (1.25), reducing to (1.5rem) on phones.
+
+- **Home:** the household greeting, care summary, suggestions, and full conversation.
+- **Medications:** a filterable recorded-dose table, daily routine, and reminder review action; reminder delivery does not mark a dose taken.
+- **Calendar:** the next appointment, clinician/location/ride details, visit packet action, and weekday/time rescheduling form.
+- **Supplies:** item names, brand, runway, simulated price/delivery, and an item-specific reorder review; low-runway items use the primary action treatment.
+- **Memory:** household notes with recorded source and time.
+
+Category actions reveal the shared assistant and run the existing conversational flow; reorder review requires explicit confirmation before a simulated order. Revealing a hidden assistant through a category action focuses its heading so the new conversation state is announced. The header toggle opens the assistant with focus in the composer; returning to the category focuses the care-view region. Suggestions remain hidden in the compact category assistant, while messages and pending confirmation remain available.
 
 ### Chips and status
 
