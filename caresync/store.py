@@ -76,7 +76,8 @@ def init_db(conn: sqlite3.Connection | None = None) -> None:
                 minute INTEGER NOT NULL,
                 day_offset INTEGER NOT NULL,
                 ride TEXT NOT NULL,
-                note TEXT NOT NULL
+                note TEXT NOT NULL,
+                weekday INTEGER
             );
             CREATE TABLE IF NOT EXISTS routines (
                 id TEXT PRIMARY KEY,
@@ -120,11 +121,13 @@ def init_db(conn: sqlite3.Connection | None = None) -> None:
                 label TEXT NOT NULL,
                 status TEXT NOT NULL,
                 result TEXT NOT NULL,
-                created_at TEXT NOT NULL
+                created_at TEXT NOT NULL,
+                kind TEXT NOT NULL DEFAULT 'note'
             );
             """
         )
         conn.commit()
+        _migrate(conn)
         row = conn.execute("SELECT value FROM meta WHERE key = 'seeded'").fetchone()
         if row is None:
             _seed(conn)
@@ -137,7 +140,9 @@ def reset_db() -> None:
     overlay = current()
     if overlay is not None:
         overlay.clear()
-        overlay.update({"pending": [], "memories": [], "supply_days": {}, "routines": {}, "tasks": []})
+        overlay.update(
+            {"pending": [], "memories": [], "supply_days": {}, "routines": {}, "tasks": [], "appointment": None}
+        )
         return
     with _lock:
         conn = _connect()
@@ -158,6 +163,24 @@ def reset_db() -> None:
             _seed(conn)
         finally:
             conn.close()
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    appointment_cols = {row[1] for row in conn.execute("PRAGMA table_info(appointment)")}
+    if "weekday" not in appointment_cols:
+        conn.execute("ALTER TABLE appointment ADD COLUMN weekday INTEGER")
+    task_cols = {row[1] for row in conn.execute("PRAGMA table_info(tasks)")}
+    if "kind" not in task_cols:
+        conn.execute("ALTER TABLE tasks ADD COLUMN kind TEXT NOT NULL DEFAULT 'note'")
+    conn.commit()
+
+
+WEEKDAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+
+def _when_label(weekday: int, hour: int, minute: int, now: datetime) -> str:
+    stamp = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
+    return f"{WEEKDAY_NAMES[weekday]}, {clock(stamp)}"
 
 
 def _seed(conn: sqlite3.Connection) -> None:
@@ -252,15 +275,20 @@ def _med_rows(conn: sqlite3.Connection, now: datetime) -> list[dict]:
 
 def _appointment(conn: sqlite3.Connection, now: datetime) -> dict:
     row = conn.execute("SELECT * FROM appointment LIMIT 1").fetchone()
-    when = (now + timedelta(days=row["day_offset"])).replace(
-        hour=row["hour"], minute=row["minute"], second=0, microsecond=0
-    )
-    day = "Today" if row["day_offset"] == 0 else "Tomorrow" if row["day_offset"] == 1 else when.strftime("%A")
+    if row["weekday"] is not None:
+        when_label = _when_label(row["weekday"], row["hour"], row["minute"], now)
+    else:
+        when = (now + timedelta(days=row["day_offset"])).replace(
+            hour=row["hour"], minute=row["minute"], second=0, microsecond=0
+        )
+        day = "Today" if row["day_offset"] == 0 else "Tomorrow" if row["day_offset"] == 1 else when.strftime("%A")
+        when_label = f"{day}, {clock(when)}"
     return {
+        "id": row["id"],
         "clinician": row["clinician"],
         "specialty": row["specialty"],
         "place": row["place"],
-        "when_label": f"{day}, {clock(when)}",
+        "when_label": when_label,
         "ride": row["ride"],
         "note": row["note"],
     }
@@ -341,6 +369,9 @@ def _with_overlay(home: dict) -> dict:
             routine["status"] = replacement
     extra = list(reversed(overlay.get("memories") or []))
     home["memories"] = (extra + home["memories"])[:6]
+    saved = overlay.get("appointment")
+    if saved:
+        home["appointment"]["when_label"] = saved["when_label"]
     return home
 
 
@@ -467,20 +498,74 @@ def close_pending(token: str, status: str) -> None:
             conn.close()
 
 
-def create_task(task_id: str, label: str) -> None:
+def update_appointment(weekday: int, hour: int, minute: int) -> dict:
+    """Store a spoken visit change. Weekday is Monday=0."""
+    init_db()
+    label = _when_label(weekday, hour, minute, _now())
     overlay = current()
     if overlay is not None:
-        overlay.setdefault("tasks", []).append(
-            {"id": task_id, "label": label, "status": "running", "result": "", "created_at": _iso(_now())}
-        )
-        overlay["tasks"] = overlay["tasks"][-8:]
-        return
+        overlay["appointment"] = {"weekday": weekday, "hour": hour, "minute": minute, "when_label": label}
+        home = household()
+        return home["appointment"]
     with _lock:
         conn = _connect()
         try:
             conn.execute(
-                "INSERT INTO tasks (id, label, status, result, created_at) VALUES (?, ?, 'running', '', ?)",
-                (task_id, label, _iso(_now())),
+                "UPDATE appointment SET weekday = ?, hour = ?, minute = ? WHERE id = 'cardio'",
+                (weekday, hour, minute),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+    return household()["appointment"]
+
+
+def _finished_result(kind: str, label: str) -> str:
+    if kind == "visit_packet":
+        return visit_packet_text()
+    return label
+
+
+def visit_packet_text() -> str:
+    home = household()
+    meds = "\n".join(f"{med['name']} {med['dose']} - {med['status']}" for med in home["meds"])
+    notes = "\n".join(note["body"] for note in home["memories"][:2]) or "No earlier notes."
+    visit = home["appointment"]
+    missed = [med["name"] for med in home["meds"] if med["status"] == "missed"]
+    if missed:
+        question = f"Ask about the missed {missed[0]} dose, and confirm the visit time still works."
+    else:
+        question = "Confirm the visit time still works, and ask if the morning doses should stay as scheduled."
+    return (
+        f"Medications\n{meds}\n\n"
+        f"Visit\n{visit['when_label']} · {visit['clinician']}\n{visit['place']}\n\n"
+        f"Notes\n{notes}\n\n"
+        f"Questions\n{question}"
+    )
+
+
+def create_task(task_id: str, label: str, kind: str = "note") -> None:
+    overlay = current()
+    if overlay is not None:
+        overlay.setdefault("tasks", []).append(
+            {
+                "id": task_id,
+                "label": label,
+                "status": "running",
+                "result": "",
+                "created_at": _iso(_now()),
+                "kind": kind,
+            }
+        )
+        overlay["tasks"] = overlay["tasks"][-8:]
+        return
+    init_db()
+    with _lock:
+        conn = _connect()
+        try:
+            conn.execute(
+                "INSERT INTO tasks (id, label, status, result, created_at, kind) VALUES (?, ?, 'running', '', ?, ?)",
+                (task_id, label, _iso(_now()), kind),
             )
             conn.commit()
         finally:
@@ -496,8 +581,14 @@ def read_task(task_id: str) -> dict | None:
         created = datetime.fromisoformat(row["created_at"])
         if row["status"] == "running" and (_now() - created).total_seconds() >= 1.5:
             row["status"] = "completed"
-            row["result"] = row["label"]
-        return {"task_id": row["id"], "label": row["label"], "status": row["status"], "result": row["result"]}
+            row["result"] = _finished_result(row.get("kind", "note"), row["label"])
+        return {
+            "task_id": row["id"],
+            "label": row["label"],
+            "kind": row.get("kind", "note"),
+            "status": row["status"],
+            "result": row["result"],
+        }
     init_db()
     with _lock:
         conn = _connect()
@@ -508,15 +599,16 @@ def read_task(task_id: str) -> dict | None:
             created = datetime.fromisoformat(row["created_at"])
             status = row["status"]
             result = row["result"]
+            kind = row["kind"] if "kind" in row.keys() else "note"
             if status == "running" and (_now() - created).total_seconds() >= 1.5:
                 status = "completed"
-                result = row["label"]
+                result = _finished_result(kind, row["label"])
                 conn.execute(
                     "UPDATE tasks SET status = ?, result = ? WHERE id = ?",
                     (status, result, task_id),
                 )
                 conn.commit()
-            return {"task_id": row["id"], "label": row["label"], "status": status, "result": result}
+            return {"task_id": row["id"], "label": row["label"], "kind": kind, "status": status, "result": result}
         finally:
             conn.close()
 

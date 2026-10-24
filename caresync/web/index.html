@@ -1,72 +1,304 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CareSync — Alexa+</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,560;0,9..144,650;1,9..144,560&family=Outfit:wght@380;500;640&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/app.css" />
-</head>
-<body>
-  <div class="room">
-    <header class="top">
-      <div class="brand">
-        <span class="mark" aria-hidden="true"></span>
-        <div>
-          <p class="eyebrow">Alexa+ simulator</p>
-          <h1>CareSync</h1>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#342449" />
+    <meta
+      name="description"
+      content="A little less to keep in your head. Your family's daily care, appointments, and supplies in one conversation."
+    />
+    <title>CareSync — Your care assistant</title>
+    <link rel="stylesheet" href="/assets/app.css" />
+  </head>
+  <body>
+    <svg
+      class="icon-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="i-link" viewBox="0 0 40 40">
+        <circle cx="15" cy="15" r="11" />
+        <circle cx="25" cy="25" r="11" />
+      </symbol>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="m3 10 9-7 9 7v10H15v-7H9v7H3Z" />
+      </symbol>
+      <symbol id="i-pill" viewBox="0 0 24 24">
+        <path d="m9 4-5 5a6.4 6.4 0 0 0 9 9l5-5a6.4 6.4 0 0 0-9-9Z" />
+        <path d="m7 7 10 10" />
+      </symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="16" rx="2" />
+        <path d="M7 3v4m10-4v4M3 11h18M7 15h2m4 0h2" />
+      </symbol>
+      <symbol id="i-box" viewBox="0 0 24 24">
+        <path d="m12 3 9 5v9l-9 5-9-5V8Zm0 10v9M3 8l9 5 9-5M7.5 5.5l9 5" />
+      </symbol>
+      <symbol id="i-note" viewBox="0 0 24 24">
+        <rect x="5" y="3" width="14" height="18" rx="2" />
+        <path d="M9 7h6m-6 4h6m-6 4h4" />
+      </symbol>
+      <symbol id="i-mic" viewBox="0 0 24 24">
+        <rect x="9" y="3" width="6" height="12" rx="3" />
+        <path d="M5 10v2a7 7 0 0 0 14 0v-2m-7 9v3m-3 0h6" />
+      </symbol>
+      <symbol id="i-send" viewBox="0 0 24 24">
+        <path d="m4 3 17 9-17 9 3-9Zm3 9h14" />
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24">
+        <path d="m9 5 7 7-7 7" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M4 12h16m-6-6 6 6-6 6" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6" />
+      </symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v6m0 3v1" />
+      </symbol>
+      <symbol id="i-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v6m0-10v1" />
+      </symbol>
+      <symbol id="i-device" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="15" rx="2" />
+        <path d="M8 22h8m-4-4v4M7 7h10" />
+      </symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24">
+        <path d="M3 10a9 9 0 1 1 1 7M3 4v6h6" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="i-car" viewBox="0 0 24 24">
+        <path d="m4 11 2-6h12l2 6M4 11h16v7H4Zm2 7v3m12-3v3M7 14h1m8 0h1" />
+      </symbol>
+    </svg>
+    <a class="skip-link" href="#utterance">Skip to care assistant</a>
+    <div class="app-shell">
+      <nav class="rail" aria-label="CareSync">
+        <a class="brand-mark" href="/" aria-label="CareSync home"
+          ><svg class="logo"><use href="#i-link" /></svg
+        ></a>
+        <div class="rail-links">
+          <button
+            type="button"
+            class="nav-item selected"
+            data-nav="home"
+            aria-current="page"
+          >
+            <svg><use href="#i-home" /></svg><span>Home</span>
+          </button>
+          <button type="button" class="nav-item" data-nav="meds">
+            <svg><use href="#i-pill" /></svg><span>Medications</span>
+          </button>
+          <button type="button" class="nav-item" data-nav="calendar">
+            <svg><use href="#i-calendar" /></svg><span>Calendar</span>
+          </button>
+          <button type="button" class="nav-item" data-nav="supplies">
+            <svg><use href="#i-box" /></svg><span>Supplies</span>
+          </button>
+          <button type="button" class="nav-item" data-nav="memory">
+            <svg><use href="#i-note" /></svg><span>Memory</span>
+          </button>
         </div>
-      </div>
-      <p class="who">Maya Reyes, asking about her mom</p>
-      <p class="proto" id="proto">MCP · Streamable HTTP</p>
-    </header>
-
-    <main class="stage">
-      <section class="device" aria-label="Kitchen Echo Show">
-        <div class="bezel">
-          <div class="screen">
-            <div class="screen-bar">
-              <span id="clock">–</span>
-              <span class="room-name">Kitchen</span>
-              <span class="cam" aria-hidden="true"></span>
-            </div>
-            <div class="orb-wrap" aria-hidden="true">
-              <div class="orb" id="orb"></div>
-            </div>
-            <p class="speech" id="speech">Ask what’s going on with Mom today. I’ll check the dispenser, the visit, and what we already wrote down.</p>
-            <div class="cards" id="cards"></div>
+        <div class="rail-profile" title="Family caregiver">
+          <span class="avatar caregiver-initials">MR</span
+          ><span id="caregiver-name">Maya</span>
+        </div>
+      </nav>
+      <button
+        type="button"
+        class="context-backdrop"
+        id="context-backdrop"
+        aria-label="Close care context"
+        hidden
+      ></button>
+      <aside
+        class="care-context"
+        id="care-context"
+        aria-labelledby="context-title"
+        tabindex="-1"
+      >
+        <div class="context-heading">
+          <h2 id="context-title">Elena’s care</h2>
+          <button
+            type="button"
+            class="icon-button context-close"
+            id="context-close"
+            aria-label="Close care context"
+          >
+            <svg><use href="#i-close" /></svg>
+          </button>
+        </div>
+        <div class="resident">
+          <span class="avatar resident-initials">ER</span>
+          <div>
+            <strong id="resident-name">Elena Reyes</strong>
+            <p id="resident-meta">Loading household…</p>
           </div>
-          <div class="chin" aria-hidden="true"><span></span></div>
         </div>
-      </section>
-
-      <aside class="board" id="board" aria-live="polite" aria-label="Elena’s care board"></aside>
-    </main>
-
-    <form class="composer" id="composer">
-      <button type="button" class="mic" id="mic" aria-label="Hold a voice question">
-        <span class="mic-dot" aria-hidden="true"></span>
-        Talk
-      </button>
-      <label class="field">
-        <span class="sr">Ask CareSync</span>
-        <input id="utterance" name="utterance" autocomplete="off" placeholder="What’s going on with Mom today?" />
-      </label>
-      <button type="submit" class="send">Ask</button>
-    </form>
-    <div class="chips" id="chips"></div>
-
-    <footer class="foot">
-      <div class="foot-actions">
-        <button type="button" id="voice">Voice on</button>
-        <button type="button" id="reset">Reset household</button>
-      </div>
-      <p class="fine">Simulated household. Not a medical device. A yes on an order does not charge a wallet.</p>
-      <p class="trace" id="trace"></p>
-    </footer>
-  </div>
-  <script src="/assets/app.js"></script>
-</body>
+        <section class="context-section" id="medications-section">
+          <button
+            type="button"
+            class="section-link"
+            data-prompt="Did she take her medications?"
+          >
+            <h3>Medications</h3>
+            <svg><use href="#i-chevron" /></svg>
+          </button>
+          <div id="medications" class="med-list" aria-busy="true">
+            <p class="muted">Loading the medication list…</p>
+          </div>
+        </section>
+        <section class="context-section" id="visit-section">
+          <button
+            type="button"
+            class="section-link"
+            data-prompt="When is the next appointment?"
+          >
+            <span class="section-title"
+              ><svg><use href="#i-calendar" /></svg>
+              <h3>Next visit</h3></span
+            ><svg><use href="#i-chevron" /></svg>
+          </button>
+          <div id="visit"><p class="muted">Loading the next visit…</p></div>
+        </section>
+        <section class="context-section" id="supplies-section">
+          <button
+            type="button"
+            class="section-link"
+            data-prompt="Check the supplies"
+          >
+            <span class="section-title"
+              ><svg><use href="#i-box" /></svg>
+              <h3>Supplies</h3></span
+            ><svg><use href="#i-chevron" /></svg>
+          </button>
+          <div id="supplies"><p class="muted">Loading supplies…</p></div>
+        </section>
+        <div class="device-status">
+          <img
+            class="device-thumb"
+            src="/assets/kitchen-display.png"
+            width="40"
+            height="40"
+            alt=""
+          />
+          <div>
+            <strong id="room">Kitchen Echo Show</strong
+            ><span id="device-online">Checking connection…</span>
+          </div>
+        </div>
+        <p class="simulation-note">
+          Simulated household.<br />Not a medical device.
+        </p>
+      </aside>
+      <main class="workspace" id="main">
+        <header class="workspace-header">
+          <div class="header-title">
+            <button
+              type="button"
+              class="icon-button context-toggle"
+              id="context-toggle"
+              aria-controls="care-context"
+              aria-expanded="false"
+              aria-label="Open care context"
+            >
+              <svg><use href="#i-home" /></svg>
+            </button>
+            <h1>Care assistant</h1>
+          </div>
+          <div class="header-actions">
+            <span class="simulator-badge"
+              ><svg><use href="#i-link" /></svg
+              ><span>Alexa+ simulator</span></span
+            ><button
+              type="button"
+              class="voice-button"
+              id="voice"
+              aria-pressed="true"
+            >
+              <svg><use href="#i-mic" /></svg><span>Voice on</span>
+            </button>
+          </div>
+        </header>
+        <div
+          class="conversation"
+          id="conversation"
+          tabindex="0"
+          aria-label="Care conversation"
+        >
+          <div class="day-divider">
+            <span>Today</span><time id="today-date"></time>
+          </div>
+          <div
+            class="messages"
+            id="log"
+            role="log"
+            aria-label="Conversation"
+            aria-live="polite"
+            aria-relevant="additions"
+          ></div>
+        </div>
+        <div class="composer-dock">
+          <div
+            class="connection-notice"
+            id="connection-notice"
+            role="status"
+            hidden
+          ></div>
+          <div class="chips" id="chips" aria-label="Suggested questions"></div>
+          <p class="composer-state" id="composer-state" role="status"></p>
+          <form class="composer" id="composer">
+            <label class="field"
+              ><span class="sr-only">Ask about Elena’s care</span
+              ><input
+                id="utterance"
+                name="utterance"
+                autocomplete="off"
+                maxlength="2000"
+                placeholder="Ask about Elena’s care…"
+                required
+            /></label>
+            <button
+              type="button"
+              class="icon-button mic-button"
+              id="mic"
+              aria-label="Ask by voice"
+            >
+              <svg><use href="#i-mic" /></svg>
+            </button>
+            <button type="submit" class="send-button" aria-label="Send message">
+              <svg><use href="#i-send" /></svg>
+            </button>
+          </form>
+          <footer class="workspace-footer">
+            <p>
+              <svg><use href="#i-info" /></svg
+              ><span
+                >Actions need your confirmation. Orders are simulated.</span
+              >
+            </p>
+            <button type="button" id="reset">
+              Reset household <svg><use href="#i-reset" /></svg>
+            </button>
+          </footer>
+          <details class="technical-details">
+            <summary>Connection details</summary>
+            <p id="proto">Connecting to CareSync…</p>
+            <p id="trace"></p>
+          </details>
+        </div>
+      </main>
+    </div>
+    <script src="/assets/app.js"></script>
+  </body>
 </html>

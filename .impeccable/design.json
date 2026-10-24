@@ -1,0 +1,604 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-19T03:51:21.946Z",
+  "title": "Design System: CareSync",
+  "extensions": {
+    "colorMeta": {
+      "plum": {
+        "role": "primary",
+        "displayName": "Deep Plum",
+        "tonalRamp": [
+          "oklch(15% 0.0674 302.46)",
+          "oklch(26.4% 0.0674 302.46)",
+          "oklch(37.9% 0.0674 302.46)",
+          "oklch(49.3% 0.0674 302.46)",
+          "oklch(60.7% 0.0674 302.46)",
+          "oklch(72.1% 0.0674 302.46)",
+          "oklch(83.6% 0.0674 302.46)",
+          "oklch(95% 0.0674 302.46)"
+        ]
+      },
+      "action": {
+        "role": "primary",
+        "displayName": "Action Plum",
+        "tonalRamp": [
+          "oklch(15% 0.1348 304.11)",
+          "oklch(26.4% 0.1348 304.11)",
+          "oklch(37.9% 0.1348 304.11)",
+          "oklch(49.3% 0.1348 304.11)",
+          "oklch(60.7% 0.1348 304.11)",
+          "oklch(72.1% 0.1348 304.11)",
+          "oklch(83.6% 0.1348 304.11)",
+          "oklch(95% 0.1348 304.11)"
+        ]
+      },
+      "action-hover": {
+        "role": "primary",
+        "displayName": "Action Plum Hover",
+        "tonalRamp": [
+          "oklch(15% 0.1159 303.25)",
+          "oklch(26.4% 0.1159 303.25)",
+          "oklch(37.9% 0.1159 303.25)",
+          "oklch(49.3% 0.1159 303.25)",
+          "oklch(60.7% 0.1159 303.25)",
+          "oklch(72.1% 0.1159 303.25)",
+          "oklch(83.6% 0.1159 303.25)",
+          "oklch(95% 0.1159 303.25)"
+        ]
+      },
+      "lavender": {
+        "role": "neutral",
+        "displayName": "Hover Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.0181 303.41)",
+          "oklch(26.4% 0.0181 303.41)",
+          "oklch(37.9% 0.0181 303.41)",
+          "oklch(49.3% 0.0181 303.41)",
+          "oklch(60.7% 0.0181 303.41)",
+          "oklch(72.1% 0.0181 303.41)",
+          "oklch(83.6% 0.0181 303.41)",
+          "oklch(95% 0.0181 303.41)"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Lavender Canvas",
+        "tonalRamp": [
+          "oklch(15% 0.0165 301.21)",
+          "oklch(26.4% 0.0165 301.21)",
+          "oklch(37.9% 0.0165 301.21)",
+          "oklch(49.3% 0.0165 301.21)",
+          "oklch(60.7% 0.0165 301.21)",
+          "oklch(72.1% 0.0165 301.21)",
+          "oklch(83.6% 0.0165 301.21)",
+          "oklch(95% 0.0165 301.21)"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Cool Context",
+        "tonalRamp": [
+          "oklch(15% 0.0053 286.30)",
+          "oklch(26.4% 0.0053 286.30)",
+          "oklch(37.9% 0.0053 286.30)",
+          "oklch(49.3% 0.0053 286.30)",
+          "oklch(60.7% 0.0053 286.30)",
+          "oklch(72.1% 0.0053 286.30)",
+          "oklch(83.6% 0.0053 286.30)",
+          "oklch(95% 0.0053 286.30)"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26.4% 0.0000 89.88)",
+          "oklch(37.9% 0.0000 89.88)",
+          "oklch(49.3% 0.0000 89.88)",
+          "oklch(60.7% 0.0000 89.88)",
+          "oklch(72.1% 0.0000 89.88)",
+          "oklch(83.6% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Deep Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0406 298.54)",
+          "oklch(26.4% 0.0406 298.54)",
+          "oklch(37.9% 0.0406 298.54)",
+          "oklch(49.3% 0.0406 298.54)",
+          "oklch(60.7% 0.0406 298.54)",
+          "oklch(72.1% 0.0406 298.54)",
+          "oklch(83.6% 0.0406 298.54)",
+          "oklch(95% 0.0406 298.54)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted Plum",
+        "tonalRamp": [
+          "oklch(15% 0.0531 298.34)",
+          "oklch(26.4% 0.0531 298.34)",
+          "oklch(37.9% 0.0531 298.34)",
+          "oklch(49.3% 0.0531 298.34)",
+          "oklch(60.7% 0.0531 298.34)",
+          "oklch(72.1% 0.0531 298.34)",
+          "oklch(83.6% 0.0531 298.34)",
+          "oklch(95% 0.0531 298.34)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Soft Divider",
+        "tonalRamp": [
+          "oklch(15% 0.0226 302.91)",
+          "oklch(26.4% 0.0226 302.91)",
+          "oklch(37.9% 0.0226 302.91)",
+          "oklch(49.3% 0.0226 302.91)",
+          "oklch(60.7% 0.0226 302.91)",
+          "oklch(72.1% 0.0226 302.91)",
+          "oklch(83.6% 0.0226 302.91)",
+          "oklch(95% 0.0226 302.91)"
+        ]
+      },
+      "green": {
+        "role": "secondary",
+        "displayName": "Care Green",
+        "tonalRamp": [
+          "oklch(15% 0.0808 164.50)",
+          "oklch(26.4% 0.0808 164.50)",
+          "oklch(37.9% 0.0808 164.50)",
+          "oklch(49.3% 0.0808 164.50)",
+          "oklch(60.7% 0.0808 164.50)",
+          "oklch(72.1% 0.0808 164.50)",
+          "oklch(83.6% 0.0808 164.50)",
+          "oklch(95% 0.0808 164.50)"
+        ]
+      },
+      "green-bg": {
+        "role": "secondary",
+        "displayName": "Care Green Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0150 164.72)",
+          "oklch(26.4% 0.0150 164.72)",
+          "oklch(37.9% 0.0150 164.72)",
+          "oklch(49.3% 0.0150 164.72)",
+          "oklch(60.7% 0.0150 164.72)",
+          "oklch(72.1% 0.0150 164.72)",
+          "oklch(83.6% 0.0150 164.72)",
+          "oklch(95% 0.0150 164.72)"
+        ]
+      },
+      "red": {
+        "role": "secondary",
+        "displayName": "Attention Rose",
+        "tonalRamp": [
+          "oklch(15% 0.1590 11.57)",
+          "oklch(26.4% 0.1590 11.57)",
+          "oklch(37.9% 0.1590 11.57)",
+          "oklch(49.3% 0.1590 11.57)",
+          "oklch(60.7% 0.1590 11.57)",
+          "oklch(72.1% 0.1590 11.57)",
+          "oklch(83.6% 0.1590 11.57)",
+          "oklch(95% 0.1590 11.57)"
+        ]
+      },
+      "red-bg": {
+        "role": "secondary",
+        "displayName": "Attention Rose Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0210 355.22)",
+          "oklch(26.4% 0.0210 355.22)",
+          "oklch(37.9% 0.0210 355.22)",
+          "oklch(49.3% 0.0210 355.22)",
+          "oklch(60.7% 0.0210 355.22)",
+          "oklch(72.1% 0.0210 355.22)",
+          "oklch(83.6% 0.0210 355.22)",
+          "oklch(95% 0.0210 355.22)"
+        ]
+      },
+      "amber": {
+        "role": "secondary",
+        "displayName": "Due Amber",
+        "tonalRamp": [
+          "oklch(15% 0.1027 66.78)",
+          "oklch(26.4% 0.1027 66.78)",
+          "oklch(37.9% 0.1027 66.78)",
+          "oklch(49.3% 0.1027 66.78)",
+          "oklch(60.7% 0.1027 66.78)",
+          "oklch(72.1% 0.1027 66.78)",
+          "oklch(83.6% 0.1027 66.78)",
+          "oklch(95% 0.1027 66.78)"
+        ]
+      },
+      "amber-bg": {
+        "role": "secondary",
+        "displayName": "Due Amber Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0273 83.54)",
+          "oklch(26.4% 0.0273 83.54)",
+          "oklch(37.9% 0.0273 83.54)",
+          "oklch(49.3% 0.0273 83.54)",
+          "oklch(60.7% 0.0273 83.54)",
+          "oklch(72.1% 0.0273 83.54)",
+          "oklch(83.6% 0.0273 83.54)",
+          "oklch(95% 0.0273 83.54)"
+        ]
+      },
+      "user-message": {
+        "role": "primary",
+        "displayName": "Conversation Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.0456 303.88)",
+          "oklch(26.4% 0.0456 303.88)",
+          "oklch(37.9% 0.0456 303.88)",
+          "oklch(49.3% 0.0456 303.88)",
+          "oklch(60.7% 0.0456 303.88)",
+          "oklch(72.1% 0.0456 303.88)",
+          "oklch(83.6% 0.0456 303.88)",
+          "oklch(95% 0.0456 303.88)"
+        ]
+      },
+      "nav-selected": {
+        "role": "primary",
+        "displayName": "Selected Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.0343 306.30)",
+          "oklch(26.4% 0.0343 306.30)",
+          "oklch(37.9% 0.0343 306.30)",
+          "oklch(49.3% 0.0343 306.30)",
+          "oklch(60.7% 0.0343 306.30)",
+          "oklch(72.1% 0.0343 306.30)",
+          "oklch(83.6% 0.0343 306.30)",
+          "oklch(95% 0.0343 306.30)"
+        ]
+      },
+      "nav-hover": {
+        "role": "primary",
+        "displayName": "Rail Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0666 305.22)",
+          "oklch(26.4% 0.0666 305.22)",
+          "oklch(37.9% 0.0666 305.22)",
+          "oklch(49.3% 0.0666 305.22)",
+          "oklch(60.7% 0.0666 305.22)",
+          "oklch(72.1% 0.0666 305.22)",
+          "oklch(83.6% 0.0666 305.22)",
+          "oklch(95% 0.0666 305.22)"
+        ]
+      },
+      "avatar": {
+        "role": "neutral",
+        "displayName": "Avatar Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.0426 303.66)",
+          "oklch(26.4% 0.0426 303.66)",
+          "oklch(37.9% 0.0426 303.66)",
+          "oklch(49.3% 0.0426 303.66)",
+          "oklch(60.7% 0.0426 303.66)",
+          "oklch(72.1% 0.0426 303.66)",
+          "oklch(83.6% 0.0426 303.66)",
+          "oklch(95% 0.0426 303.66)"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.1083 304.45)",
+          "oklch(26.4% 0.1083 304.45)",
+          "oklch(37.9% 0.1083 304.45)",
+          "oklch(49.3% 0.1083 304.45)",
+          "oklch(60.7% 0.1083 304.45)",
+          "oklch(72.1% 0.1083 304.45)",
+          "oklch(83.6% 0.1083 304.45)",
+          "oklch(95% 0.1083 304.45)"
+        ]
+      },
+      "confirmation-border": {
+        "role": "neutral",
+        "displayName": "Confirmation Plum",
+        "tonalRamp": [
+          "oklch(15% 0.1338 308.65)",
+          "oklch(26.4% 0.1338 308.65)",
+          "oklch(37.9% 0.1338 308.65)",
+          "oklch(49.3% 0.1338 308.65)",
+          "oklch(60.7% 0.1338 308.65)",
+          "oklch(72.1% 0.1338 308.65)",
+          "oklch(83.6% 0.1338 308.65)",
+          "oklch(95% 0.1338 308.65)"
+        ]
+      },
+      "secondary-border": {
+        "role": "neutral",
+        "displayName": "Secondary Outline",
+        "tonalRamp": [
+          "oklch(15% 0.0584 305.94)",
+          "oklch(26.4% 0.0584 305.94)",
+          "oklch(37.9% 0.0584 305.94)",
+          "oklch(49.3% 0.0584 305.94)",
+          "oklch(60.7% 0.0584 305.94)",
+          "oklch(72.1% 0.0584 305.94)",
+          "oklch(83.6% 0.0584 305.94)",
+          "oklch(95% 0.0584 305.94)"
+        ]
+      },
+      "chip-bg": {
+        "role": "neutral",
+        "displayName": "Suggestion Lavender",
+        "tonalRamp": [
+          "oklch(15% 0.0098 305.41)",
+          "oklch(26.4% 0.0098 305.41)",
+          "oklch(37.9% 0.0098 305.41)",
+          "oklch(49.3% 0.0098 305.41)",
+          "oklch(60.7% 0.0098 305.41)",
+          "oklch(72.1% 0.0098 305.41)",
+          "oklch(83.6% 0.0098 305.41)",
+          "oklch(95% 0.0098 305.41)"
+        ]
+      },
+      "chip-border": {
+        "role": "neutral",
+        "displayName": "Suggestion Outline",
+        "tonalRamp": [
+          "oklch(15% 0.0317 306.16)",
+          "oklch(26.4% 0.0317 306.16)",
+          "oklch(37.9% 0.0317 306.16)",
+          "oklch(49.3% 0.0317 306.16)",
+          "oklch(60.7% 0.0317 306.16)",
+          "oklch(72.1% 0.0317 306.16)",
+          "oklch(83.6% 0.0317 306.16)",
+          "oklch(95% 0.0317 306.16)"
+        ]
+      },
+      "chip-text": {
+        "role": "neutral",
+        "displayName": "Suggestion Text",
+        "tonalRamp": [
+          "oklch(15% 0.0912 308.15)",
+          "oklch(26.4% 0.0912 308.15)",
+          "oklch(37.9% 0.0912 308.15)",
+          "oklch(49.3% 0.0912 308.15)",
+          "oklch(60.7% 0.0912 308.15)",
+          "oklch(72.1% 0.0912 308.15)",
+          "oklch(83.6% 0.0912 308.15)",
+          "oklch(95% 0.0912 308.15)"
+        ]
+      },
+      "chip-hover": {
+        "role": "neutral",
+        "displayName": "Suggestion Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0302 307.10)",
+          "oklch(26.4% 0.0302 307.10)",
+          "oklch(37.9% 0.0302 307.10)",
+          "oklch(49.3% 0.0302 307.10)",
+          "oklch(60.7% 0.0302 307.10)",
+          "oklch(72.1% 0.0302 307.10)",
+          "oklch(83.6% 0.0302 307.10)",
+          "oklch(95% 0.0302 307.10)"
+        ]
+      },
+      "status-bg": {
+        "role": "neutral",
+        "displayName": "Quiet Status Surface",
+        "tonalRamp": [
+          "oklch(15% 0.0094 292.79)",
+          "oklch(26.4% 0.0094 292.79)",
+          "oklch(37.9% 0.0094 292.79)",
+          "oklch(49.3% 0.0094 292.79)",
+          "oklch(60.7% 0.0094 292.79)",
+          "oklch(72.1% 0.0094 292.79)",
+          "oklch(83.6% 0.0094 292.79)",
+          "oklch(95% 0.0094 292.79)"
+        ]
+      },
+      "status-text": {
+        "role": "neutral",
+        "displayName": "Quiet Status Text",
+        "tonalRamp": [
+          "oklch(15% 0.0478 298.70)",
+          "oklch(26.4% 0.0478 298.70)",
+          "oklch(37.9% 0.0478 298.70)",
+          "oklch(49.3% 0.0478 298.70)",
+          "oklch(60.7% 0.0478 298.70)",
+          "oklch(72.1% 0.0478 298.70)",
+          "oklch(83.6% 0.0478 298.70)",
+          "oklch(95% 0.0478 298.70)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Workspace Heading",
+        "purpose": "Desktop workspace heading; smaller at tablet and phone widths."
+      },
+      "title": {
+        "displayName": "Task Title",
+        "purpose": "Care section and confirmation headings."
+      },
+      "body": {
+        "displayName": "Conversation Body",
+        "purpose": "Readable message text; smaller on phones."
+      },
+      "supporting": {
+        "displayName": "Supporting Detail",
+        "purpose": "Summary details, confirmation explanations, task output."
+      },
+      "button": {
+        "displayName": "Action Label",
+        "purpose": "Primary and secondary action labels."
+      },
+      "label": {
+        "displayName": "Compact Label",
+        "purpose": "Suggested questions and interface labels."
+      },
+      "status": {
+        "displayName": "Status",
+        "purpose": "Small pills and state labels."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "button-state",
+        "value": "background-color 160ms ease, color 160ms ease, border-color 160ms ease",
+        "purpose": "Button hover and state changes."
+      },
+      {
+        "name": "context-drawer",
+        "value": "transform 220ms cubic-bezier(0.16, 1, 0.3, 1), visibility 220ms",
+        "purpose": "Reveal or close care context at tablet and phone widths."
+      },
+      {
+        "name": "thinking",
+        "value": "thinking 1.6s ease-in-out infinite; 50% { opacity: 0.35; }",
+        "purpose": "Fade the checking icon while waiting."
+      },
+      {
+        "name": "conversation-scroll",
+        "value": "smooth",
+        "purpose": "Follow new messages and async completion when already near the bottom."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation: none !important; transition: none !important; scroll-behavior: auto !important",
+        "purpose": "Applied under prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide",
+        "value": "min-width: 1500px"
+      },
+      {
+        "name": "inline-confirmation",
+        "value": "min-width: 1201px"
+      },
+      {
+        "name": "compact-desktop",
+        "value": "max-width: 1200px"
+      },
+      {
+        "name": "context-drawer",
+        "value": "max-width: 900px"
+      },
+      {
+        "name": "phone",
+        "value": "max-width: 600px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Explicitly approve a proposed action.",
+      "html": "<button class=\"ds-primary\">Yes, send it</button>",
+      "css": ".ds-primary{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;font-size:.8125rem;font-weight:600;min-height:42px;padding:10px 17px;border-radius:8px;cursor:pointer;transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease;background:var(--action,#512779);color:var(--white,#fff);border:1px solid var(--action,#512779)}.ds-primary:hover:not(:disabled){background:var(--action-hover,#3e1c60)}.ds-primary:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;}.ds-primary:disabled{opacity:.55;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Defer or decline without competing with confirmation.",
+      "html": "<button class=\"ds-secondary\">Not now</button>",
+      "css": ".ds-secondary{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;font-size:.8125rem;font-weight:600;min-height:42px;padding:10px 17px;border-radius:8px;cursor:pointer;transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease;background:var(--white,#fff);color:var(--action,#512779);border:1px solid var(--secondary-border,#b9a7ce)}.ds-secondary:hover:not(:disabled){background:var(--lavender,#eee9f6)}.ds-secondary:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;}.ds-secondary:disabled{opacity:.55;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-secondary{transition:none}}"
+    },
+    {
+      "name": "Conversation Composer",
+      "kind": "input",
+      "refersTo": "composer",
+      "description": "Anchored question field with a circular send control.",
+      "html": "<form class=\"ds-composer\" onsubmit=\"return false\"><input aria-label=\"Ask about Elena's care\" placeholder=\"Ask about Elena’s care…\"/><button type=\"submit\" aria-label=\"Send message\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m4 3 17 9-17 9 3-9Zm3 9h14\"/></svg></button></form>",
+      "css": ".ds-composer{display:flex;align-items:center;gap:10px;padding:9px 12px 9px 18px;background:var(--white,#fff);border:1px solid var(--line,#dfd9e9);border-radius:12px}.ds-composer:focus-within{border-color:#a38abe}.ds-composer input{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;flex:1;min-width:0;min-height:40px;width:100%;font-size:.9375rem;color:var(--ink,#20192e);background:transparent;border:0;padding:0;outline:none;caret-color:var(--action,#512779)}.ds-composer input::placeholder{color:#716482;opacity:1}.ds-composer button{display:grid;place-items:center;width:42px;height:42px;flex:none;border:0;border-radius:50%;color:white;background:var(--action,#512779);cursor:pointer;transition:background-color 160ms ease}.ds-composer button:hover{background:var(--action-hover,#3e1c60)}.ds-composer button:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;}.ds-composer svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;width:23px;height:23px}@media(prefers-reduced-motion:reduce){.ds-composer button{transition:none}}"
+    },
+    {
+      "name": "Rail Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-selected",
+      "description": "Selected icon-over-label tile on the persistent plum rail.",
+      "html": "<nav class=\"ds-rail\" aria-label=\"CareSync\"><button class=\"ds-nav\" aria-current=\"page\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m3 10 9-7 9 7v10H15v-7H9v7H3Z\"/></svg><span>Home</span></button></nav>",
+      "css": ".ds-rail{width:72px;background:var(--plum,#342449);padding:8px}.ds-nav{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;min-height:70px;padding:13px 2px;border:0;border-radius:10px;font-size:.6875rem;color:#ece6f5;background:transparent;cursor:pointer;transition:background-color 160ms ease,color 160ms ease}.ds-nav:hover{background:var(--nav-hover,#4b395f)}.ds-nav[aria-current=page]{color:var(--plum,#342449);background:var(--nav-selected,#e8ddf5)}.ds-nav:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;}.ds-nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;width:25px;height:25px}@media(prefers-reduced-motion:reduce){.ds-nav{transition:none}}"
+    },
+    {
+      "name": "Suggested Question",
+      "kind": "chip",
+      "refersTo": "suggestion",
+      "description": "A compact shortcut into a caregiver question.",
+      "html": "<button class=\"ds-suggestion\">Get me ready for the visit</button>",
+      "css": ".ds-suggestion{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;background:var(--chip-bg,#f8f5fc);border:1px solid var(--chip-border,#dbd1e7);border-radius:8px;padding:7px 11px;color:var(--chip-text,#5b3e73);font-size:.75rem;text-align:left;cursor:pointer;transition:background-color 160ms ease}.ds-suggestion:hover:not(:disabled){background:var(--chip-hover,#e6dcf1)}.ds-suggestion:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;}.ds-suggestion:disabled{opacity:.55;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-suggestion{transition:none}}"
+    },
+    {
+      "name": "Care Status",
+      "kind": "chip",
+      "refersTo": "status",
+      "description": "Compact status with a label and supporting icon; color remains secondary to text.",
+      "html": "<span class=\"ds-status\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/></svg>Upcoming</span><span class=\"ds-status ds-status-taken\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg>Taken</span>",
+      "css": ".ds-status{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:4px 8px;border-radius:20px;font-size:.6875rem;font-weight:600;white-space:nowrap;color:var(--status-text,#59506d);background:var(--status-bg,#eeedf4);text-transform:capitalize}.ds-status-taken{color:var(--green,#24684e);background:var(--green-bg,#e5f1eb)}.ds-status svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;width:13px;height:13px;stroke-width:2}"
+    },
+    {
+      "name": "Care Summary",
+      "kind": "card",
+      "refersTo": "summary",
+      "description": "White summary row pairing an icon with care context and a next-step chevron.",
+      "html": "<div class=\"ds-summary\"><button class=\"ds-row\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m9 4-5 5a6.4 6.4 0 0 0 9 9l5-5a6.4 6.4 0 0 0-9-9Z\"/><path d=\"m7 7 10 10\"/></svg><span class=\"ds-copy\"><strong>Medication check-in</strong><span>Review the medication record</span></span><svg class=\"ds-chevron\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m9 5 7 7-7 7\"/></svg></button></div>",
+      "css": ".ds-summary{max-width:680px;overflow:hidden;background:var(--white,#fff);border-radius:12px}.ds-row{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;display:flex;align-items:center;gap:14px;width:100%;padding:15px 19px;border:0;text-align:left;background:white;color:var(--ink,#20192e);cursor:pointer;transition:background-color 160ms ease}.ds-row:hover{background:#f9f7fc}.ds-row:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;outline-offset:-4px}.ds-row svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;width:23px;height:23px}.ds-copy{flex:1;min-width:0}.ds-copy strong{display:block;font-size:.875rem;font-weight:600}.ds-copy>span{display:block;font-size:.8125rem;line-height:1.5;margin-top:3px;color:var(--muted,#665c7d)}.ds-row .ds-chevron{width:16px;height:16px;color:var(--muted,#665c7d)}@media(prefers-reduced-motion:reduce){.ds-row{transition:none}}"
+    },
+    {
+      "name": "Confirmation Slip",
+      "kind": "custom",
+      "refersTo": "confirmation",
+      "description": "An outlined proposal with explicit confirm/defer actions and textual pending state.",
+      "html": "<section class=\"ds-confirm\"><h3>Send a medication reminder?</h3><p>This sends a reminder. It does not mark the dose as taken.</p><div class=\"ds-actions\"><button class=\"ds-confirm-yes\">Yes, send it</button><button class=\"ds-confirm-no\">Not now</button></div><div class=\"ds-pending\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/></svg>Awaiting your confirmation</div></section>",
+      "css": ".ds-confirm{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;border:1px solid var(--confirmation-border,#8253a6);border-radius:12px;padding:19px;background:var(--white,#fff);color:var(--ink,#20192e)}.ds-confirm h3{font-size:.9375rem;line-height:1.4;font-weight:650;margin:0 0 6px}.ds-confirm p{font-size:.8125rem;line-height:1.55;color:var(--muted,#665c7d);margin:0}.ds-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:17px}.ds-actions button{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;font-size:.8125rem;font-weight:600;min-height:42px;padding:10px 17px;border-radius:8px;cursor:pointer;transition:background-color 160ms ease,color 160ms ease,border-color 160ms ease;}.ds-confirm-yes{color:white;background:var(--action,#512779);border:1px solid var(--action,#512779)}.ds-confirm-yes:hover{background:var(--action-hover,#3e1c60)}.ds-confirm-no{color:var(--action,#512779);background:white;border:1px solid var(--secondary-border,#b9a7ce)}.ds-confirm-no:hover{background:var(--lavender,#eee9f6)}.ds-actions button:focus-visible{outline:3px solid var(--focus,#9575bb);outline-offset:4px;}.ds-pending{display:flex;align-items:center;gap:7px;font-size:.75rem;color:var(--action,#512779);margin-top:9px}.ds-pending svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;width:16px;height:16px}@media(prefers-reduced-motion:reduce){.ds-actions button{transition:none}}"
+    },
+    {
+      "name": "Assistant Message",
+      "kind": "custom",
+      "refersTo": "assistant-message",
+      "description": "A white directional message surface with linked-ring authorship.",
+      "html": "<article class=\"ds-message\"><span class=\"ds-assistant\" aria-hidden=\"true\"><svg viewBox=\"0 0 40 40\"><circle cx=\"15\" cy=\"15\" r=\"11\"/><circle cx=\"25\" cy=\"25\" r=\"11\"/></svg></span><div class=\"ds-message-content\"><p class=\"ds-author\">CareSync</p><div class=\"ds-bubble\"><p>What would you like to check in the care record?</p></div><time class=\"ds-time\">11:48 AM</time></div></article>",
+      "css": ".ds-message{font-family:\"Segoe UI Variable\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif;display:flex;gap:15px;color:var(--ink,#20192e)}.ds-assistant{display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;color:white;background:var(--action,#512779);margin-top:24px}.ds-assistant svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none;width:28px;height:28px;stroke-width:2.6}.ds-message-content{flex:1;min-width:0}.ds-author{font-size:.75rem;font-weight:650;color:var(--action,#512779);margin:0 0 7px}.ds-bubble{background:var(--white,#fff);padding:14px 18px;border-radius:0 12px 12px;max-width:74ch}.ds-bubble p{font-size:.9375rem;line-height:1.65;margin:0;overflow-wrap:anywhere;white-space:pre-line}.ds-time{display:block;font-size:.6875rem;color:var(--muted,#665c7d);margin-top:6px;font-variant-numeric:tabular-nums}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Community health wayfinding",
+    "overview": "CareSync is a calm, conversational family care workspace. Deep plum establishes a stable navigation landmark; cool white care context and a pale lavender conversation field make household information easy to locate without competing with the current task.\n\nThe visual language is practical and approachable: readable Segoe-like task typography, precise line icons, linked-ring identity, white message surfaces, and outlined confirmation slips. Care status remains explicit in text and small semantic badges. Simulation labels and confirmation language are part of the interface's clarity.",
+    "keyCharacteristics": [
+      "Plum landmarks and lavender conversation surfaces.",
+      "Readable task typography with restrained size contrast.",
+      "Flat tonal layering, thin dividers, and softly rounded controls.",
+      "Clearly authored messages and explicit action confirmation."
+    ],
+    "rules": [
+      {
+        "name": "The Text-With-Status Rule",
+        "body": "Communicate state with a readable label alongside its color; use an icon where the implemented status pattern supplies one.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tonal Depth Rule",
+        "body": "Preserve tonal separation and thin borders instead of introducing decorative drop shadows.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use plum landmarks, lavender conversation surfaces, and white foreground content.",
+      "Do keep care status legible in text alongside semantic color.",
+      "Do retain the linked-ring identity and precise rounded line icons.",
+      "Do keep confirmation decisions and their eventual outcomes visible in the conversation.",
+      "Do preserve the accessible context drawer and reduced-motion behavior."
+    ],
+    "donts": [
+      "Don't add decorative shadows to the flat tonal surface system.",
+      "Don't substitute a display or editorial font for the approved Segoe-like task typography.",
+      "Don't use color alone to communicate medication or action state.",
+      "Don't visually present a delivered reminder as a taken medication."
+    ]
+  }
+}

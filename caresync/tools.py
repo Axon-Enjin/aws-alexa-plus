@@ -16,7 +16,10 @@ from caresync.store import (
     read_task,
     remember,
     stage,
+    update_appointment as save_appointment,
 )
+
+ALLOWED_HOUSEHOLDS = {RESIDENT_ID, "hh_demo"}
 
 
 def _dump(payload: dict) -> str:
@@ -25,6 +28,12 @@ def _dump(payload: dict) -> str:
 
 def _denied(action: str, reason: str) -> str:
     return _dump({"ok": False, "status": "denied", "action": action, "reason": reason})
+
+
+def _scope(resident_id: str) -> str | None:
+    if resident_id not in ALLOWED_HOUSEHOLDS:
+        return _denied("read", "That household is not on this plan.")
+    return None
 
 
 def _guard(action: str, actor_id: str, *, confirmed: bool = False) -> str | None:
@@ -37,7 +46,7 @@ def _guard(action: str, actor_id: str, *, confirmed: bool = False) -> str | None
 
 def recall_memory(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDENT_ID) -> str:
     """Cross-session notes CareSync already has about this household."""
-    blocked = _guard("read", actor_id)
+    blocked = _scope(resident_id) or _guard("read", actor_id)
     if blocked:
         return blocked
     home = household()
@@ -53,7 +62,7 @@ def recall_memory(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDE
 
 def read_telemetry(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDENT_ID) -> str:
     """Pill dispenser, motion, fall quiet-period, and whether the kitchen Show is online."""
-    blocked = _guard("read", actor_id)
+    blocked = _scope(resident_id) or _guard("read", actor_id)
     if blocked:
         return blocked
     home = household()
@@ -74,7 +83,7 @@ def read_telemetry(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESID
 
 def read_calendar(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDENT_ID) -> str:
     """The next appointment, who is driving, and what is still unfinished."""
-    blocked = _guard("read", actor_id)
+    blocked = _scope(resident_id) or _guard("read", actor_id)
     if blocked:
         return blocked
     home = household()
@@ -83,7 +92,7 @@ def read_calendar(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDE
 
 def read_routines(actor_id: str = policy.CAREGIVER_ID, resident_id: str = RESIDENT_ID) -> str:
     """Today's care routine and which steps are still open."""
-    blocked = _guard("read", actor_id)
+    blocked = _scope(resident_id) or _guard("read", actor_id)
     if blocked:
         return blocked
     home = household()
@@ -96,7 +105,7 @@ def check_inventory(
     resident_id: str = RESIDENT_ID,
 ) -> str:
     """Days of each supply left, and the usual listing a caregiver would reorder."""
-    blocked = _guard("read", actor_id)
+    blocked = _scope(resident_id) or _guard("read", actor_id)
     if blocked:
         return blocked
     home = household()
@@ -122,7 +131,7 @@ def propose_action(
     resident_id: str = RESIDENT_ID,
 ) -> str:
     """Stage a reminder or an order. Does not execute it. Returns a confirmation token."""
-    blocked = _guard("propose", actor_id)
+    blocked = _scope(resident_id) or _guard("propose", actor_id)
     if blocked:
         return blocked
     home = household()
@@ -187,6 +196,36 @@ def confirm_action(
             "confirmation_token": pending["token"],
         }
     )
+
+
+def update_appointment(
+    weekday: int,
+    hour: int,
+    minute: int,
+    actor_id: str = policy.CAREGIVER_ID,
+    resident_id: str = RESIDENT_ID,
+) -> str:
+    """Save a spoken visit change and read the new time back."""
+    blocked = _scope(resident_id) or _guard("propose", actor_id)
+    if blocked:
+        return blocked
+    saved = save_appointment(weekday, hour, minute)
+    remember(f"Maya moved cardiology to {saved['when_label']}.", "update")
+    return _dump({"ok": True, "appointment": saved})
+
+
+def start_visit_packet(
+    actor_id: str = policy.CAREGIVER_ID,
+    resident_id: str = RESIDENT_ID,
+) -> str:
+    """Start a visit-prep packet. Poll get_task until it finishes."""
+    blocked = _scope(resident_id) or _guard("read", actor_id)
+    if blocked:
+        return blocked
+    visit = household()["appointment"]["when_label"]
+    task_id = "task_" + secrets.token_hex(3)
+    create_task(task_id, visit, kind="visit_packet")
+    return _dump({"ok": True, "status": "running", "task_id": task_id, "when_label": visit})
 
 
 def dismiss_action(session_id: str, confirmation_token: str = "", actor_id: str = policy.CAREGIVER_ID) -> str:
