@@ -91,9 +91,10 @@ def build_mcp(port: int) -> FastMCP:
         session_id: str,
         actor_id: str = "maya-reyes",
         resident_id: str = "elena-reyes",
+        item_query: str = "",
     ) -> str:
         """Stage a reminder or an order. Does not execute it. Returns a confirmation token."""
-        return tools.propose_action(kind, session_id, actor_id, resident_id)
+        return tools.propose_action(kind, session_id, actor_id, resident_id, item_query)
 
     @mcp.tool(annotations=STAGED)
     def confirm_action(

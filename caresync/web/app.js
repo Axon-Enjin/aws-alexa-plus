@@ -87,6 +87,7 @@ function status(value) {
     "skipped",
     "running",
     "completed",
+    "reminded",
   ].includes(value)
     ? value
     : "upcoming";
@@ -156,7 +157,7 @@ function setBusy(value) {
   form.setAttribute("aria-busy", String(value));
   document
     .querySelectorAll(
-      ".send-button, #reset, .chips button, .nav-item, .text-action, .section-link, .summary-row, .retry-button, .confirmation-actions button",
+      ".send-button, #reset, .chips button, .route-action, .text-action, .summary-row, .retry-button, .confirmation-actions button",
     )
     .forEach((node) => {
       node.disabled =
@@ -234,10 +235,18 @@ function applyHousehold(home) {
         `supply-runway ${item.days_left > 7 ? "stocked" : ""}`,
         `${item.days_left} days left`,
       ),
-      textAction(
-        item.days_left <= 7 ? "Review reorder" : "View supplies",
-        `Check ${item.name} supplies`,
-      ),
+      (() => {
+        const action = button(
+          item.days_left <= 7 ? "Review reorder" : "View supplies",
+          "text-action",
+          () =>
+            item.days_left <= 7
+              ? send(`Order ${item.name}`)
+              : navigate("supplies"),
+        );
+        action.append(icon("arrow"));
+        return action;
+      })(),
     );
     row.append(image, copy);
     supplies.append(row);
@@ -251,6 +260,7 @@ function applyHousehold(home) {
   $("#device-online").textContent = device?.online ? "Online" : "Offline";
   $("#device-online").classList.toggle("offline", !device?.online);
   renderSuggestions();
+  renderRoute();
 }
 function greeting(home) {
   const name = firstName(home.resident?.name) || "Your family member";
@@ -515,7 +525,10 @@ async function watchTask(taskId, node, badge, body, kind) {
         throw new Error(task.reason || "Task unavailable");
       if (task.status === "completed") {
         const followingLatest =
-          conversation.scrollHeight - conversation.scrollTop - conversation.clientHeight < 80;
+          conversation.scrollHeight -
+            conversation.scrollTop -
+            conversation.clientHeight <
+          80;
         badge.replaceWith(status("completed"));
         if (kind === "packet") {
           body.textContent =
@@ -586,6 +599,10 @@ function say(text) {
 async function send(utterance, token = "") {
   const text = String(utterance || "").trim();
   if (!text || busy) return;
+  const openingAssistant = activeRoute !== "home" && !assistantOpen;
+  setContext(false);
+  setAssistantOpen(true);
+  if (openingAssistant) $(".assistant-panel-title").focus({ preventScroll: true });
   if (text.length > 2000) {
     setNotice("Keep your question under 2,000 characters and try again.");
     return;
@@ -735,22 +752,7 @@ document
   );
 document.querySelectorAll("[data-nav]").forEach((node) =>
   node.addEventListener("click", () => {
-    if (busy) return;
-    document.querySelectorAll("[data-nav]").forEach((item) => {
-      item.classList.toggle("selected", item === node);
-      item.removeAttribute("aria-current");
-    });
-    node.setAttribute("aria-current", "page");
-    const prompts = {
-      meds: "Did she take her medications?",
-      calendar: "When is the next appointment?",
-      supplies: "Check the supplies",
-      memory: "What did we decide last time?",
-    };
-    if (node.dataset.nav === "home") {
-      scrollToLatest();
-      input.focus();
-    } else send(prompts[node.dataset.nav]);
+    navigate(node.dataset.nav === "meds" ? "medications" : node.dataset.nav);
   }),
 );
 form.addEventListener("submit", (event) => {
@@ -778,11 +780,7 @@ reset.addEventListener("click", async () => {
     input.value = "";
     setNotice();
     $("#trace").textContent = "";
-    document.querySelectorAll("[data-nav]").forEach((node) => {
-      node.classList.toggle("selected", node.dataset.nav === "home");
-      node.removeAttribute("aria-current");
-    });
-    $("[data-nav='home']").setAttribute("aria-current", "page");
+    renderRoute();
   } catch {
     setNotice(
       "The household couldn’t be reset. Try Reset household again when the server is available.",
@@ -869,4 +867,422 @@ async function load() {
     setBusy(false);
   }
 }
+const routes = {
+  home: { title: "Care assistant", icon: "home" },
+  medications: { title: "Medications", icon: "pill" },
+  calendar: { title: "Calendar", icon: "calendar" },
+  supplies: { title: "Supplies", icon: "box" },
+  memory: { title: "Memory", icon: "note" },
+};
+let activeRoute = "home";
+let assistantOpen = window.matchMedia("(min-width: 1300px)").matches;
+const viewState = { medicationFilter: "all", weekday: "", time: "" };
+const routePane = $("#route-view");
+const assistantToggle = $("#assistant-toggle");
+
+function navigate(route) {
+  const target = routes[route] ? route : "home";
+  if (location.hash === `#/${target}`) applyRoute();
+  else location.hash = `/${target}`;
+}
+function setAssistantOpen(open) {
+  assistantOpen = !!open;
+  const isHome = activeRoute === "home";
+  const visible = isHome || assistantOpen;
+  $("#main").classList.toggle("assistant-open", visible);
+  assistantToggle.hidden = isHome;
+  assistantToggle.setAttribute("aria-expanded", String(visible));
+  assistantToggle.textContent = !visible
+    ? "Care assistant"
+    : window.matchMedia("(min-width: 1300px)").matches
+      ? "Hide assistant"
+      : "Back to view";
+  assistantToggle.setAttribute(
+    "aria-label",
+    visible
+      ? `Return to ${routes[activeRoute].title} view`
+      : "Open care assistant",
+  );
+  if (visible) scrollToLatest();
+}
+function applyRoute() {
+  const previousRoute = activeRoute;
+  const candidate = location.hash.replace(/^#\/?/, "");
+  activeRoute = Object.hasOwn(routes, candidate) ? candidate : "home";
+  if (previousRoute !== activeRoute)
+    assistantOpen = window.matchMedia("(min-width: 1300px)").matches;
+  if (candidate !== activeRoute) history.replaceState(null, "", `#/home`);
+  $("#main").classList.toggle("route-mode", activeRoute !== "home");
+  routePane.hidden = activeRoute === "home";
+  $(".header-title h1").textContent = routes[activeRoute].title;
+  document.title = `${routes[activeRoute].title} · CareSync`;
+  document.querySelectorAll("[data-nav], [data-route]").forEach((node) => {
+    const key =
+      node.dataset.route ||
+      (node.dataset.nav === "meds" ? "medications" : node.dataset.nav);
+    const selected = key === activeRoute;
+    node.classList.toggle("selected", selected);
+    if (selected) node.setAttribute("aria-current", "page");
+    else node.removeAttribute("aria-current");
+  });
+  setContext(false);
+  renderRoute();
+  setAssistantOpen(assistantOpen);
+  routePane.scrollTop = 0;
+}
+assistantToggle.addEventListener("click", () => {
+  setAssistantOpen(!assistantOpen);
+  if (assistantOpen) input.focus({ preventScroll: true });
+  else routePane.focus({ preventScroll: true });
+});
+window.addEventListener("hashchange", applyRoute);
+document.querySelectorAll("[data-route]").forEach((node) =>
+  node.addEventListener("click", (event) => {
+    event.preventDefault();
+    navigate(node.dataset.route);
+  }),
+);
+$(".skip-link").addEventListener("click", (event) => {
+  event.preventDefault();
+  setAssistantOpen(true);
+  input.focus();
+});
+window
+  .matchMedia("(min-width: 1300px)")
+  .addEventListener("change", (event) => setAssistantOpen(event.matches));
+
+function routeAction(label, utterance, primary = false) {
+  const node = button(
+    label,
+    `${primary ? "primary-button" : "secondary-button"} route-action`,
+    () => send(utterance),
+  );
+  node.disabled = busy;
+  return node;
+}
+function viewHeading(title, description) {
+  const header = element("div", "view-heading");
+  header.append(element("h2", "", title), element("p", "muted", description));
+  return header;
+}
+function emptyView(text) {
+  return element("p", "view-empty", text);
+}
+function detailRow(label, value) {
+  const row = element("div", "detail-row");
+  row.append(
+    element("dt", "", label),
+    element("dd", "", value || "Not recorded"),
+  );
+  return row;
+}
+function renderRoute() {
+  if (!routePane || activeRoute === "home") return;
+  routePane.replaceChildren();
+  if (!household) {
+    routePane.append(
+      emptyView(
+        "Connecting to the household record. If it cannot load, open the care assistant to reconnect.",
+      ),
+    );
+    return;
+  }
+  const name = firstName(household.resident?.name);
+  if (activeRoute === "medications") {
+    routePane.append(
+      viewHeading(
+        "Today’s medications",
+        `${name}’s recorded doses and schedule. A reminder does not mark a medication as taken.`,
+      ),
+    );
+    const toolbar = element("div", "view-toolbar");
+    const label = element("label", "filter-label", "Show ");
+    const filter = element("select");
+    filter.id = "medication-filter";
+    for (const [value, text] of [
+      ["all", "All medications"],
+      ["attention", "Needs attention"],
+      ["taken", "Taken"],
+      ["upcoming", "Upcoming"],
+    ]) {
+      const option = element("option", "", text);
+      option.value = value;
+      filter.append(option);
+    }
+    filter.value = viewState.medicationFilter;
+    filter.addEventListener("change", () => {
+      viewState.medicationFilter = filter.value;
+      renderRoute();
+      $("#medication-filter").focus();
+    });
+    label.append(filter);
+    toolbar.append(
+      label,
+      routeAction("Review reminder", "Remind her on the kitchen Show", true),
+    );
+    routePane.append(toolbar);
+    const meds = (household.meds || []).filter(
+      (med) =>
+        viewState.medicationFilter === "all" ||
+        (viewState.medicationFilter === "attention"
+          ? ["missed", "due"].includes(med.status)
+          : med.status === viewState.medicationFilter),
+    );
+    if (!meds.length)
+      routePane.append(
+        emptyView(
+          "No medications match this filter. Choose All medications to see the complete schedule.",
+        ),
+      );
+    else {
+      const table = element("table", "medication-table");
+      const caption = element(
+        "caption",
+        "sr-only",
+        "Medication name, dose, time, and recorded status",
+      );
+      table.append(caption);
+      const head = element("thead");
+      const heading = element("tr");
+      for (const text of ["Medication", "Time", "Status"]) {
+        const th = element("th", "", text);
+        th.scope = "col";
+        heading.append(th);
+      }
+      head.append(heading);
+      table.append(head);
+      const body = element("tbody");
+      for (const med of meds) {
+        const row = element("tr");
+        const nameCell = element("th");
+        nameCell.scope = "row";
+        nameCell.append(
+          element("strong", "", med.name),
+          element("span", "muted", med.dose),
+        );
+        const time = element("td", "", med.time);
+        const state = element("td");
+        state.append(status(med.status));
+        row.append(nameCell, time, state);
+        body.append(row);
+      }
+      table.append(body);
+      routePane.append(table);
+    }
+    const routines = element("section", "view-section");
+    routines.append(element("h3", "", "Daily routine"));
+    for (const routine of household.routines || []) {
+      const row = element("div", "routine-row");
+      const copy = element("div");
+      copy.append(
+        element("strong", "", routine.label),
+        element("span", "muted", routine.when_label),
+      );
+      row.append(copy, status(routine.status));
+      routines.append(row);
+    }
+    if (!household.routines?.length)
+      routines.append(emptyView("No routines recorded."));
+    routePane.append(routines);
+  }
+  if (activeRoute === "calendar") {
+    routePane.append(
+      viewHeading(
+        "The next visit",
+        "The appointment, the ride, and what to bring—all in one place.",
+      ),
+    );
+    const visit = household.appointment;
+    if (!visit) {
+      routePane.append(
+        emptyView("No upcoming appointment in the household record."),
+      );
+      return;
+    }
+    const panel = element("section", "visit-detail");
+    const title = element("div", "visit-title");
+    title.append(icon("calendar"), element("h3", "", visit.specialty));
+    panel.append(title, element("p", "appointment-time", visit.when_label));
+    const details = element("dl", "detail-list");
+    details.append(
+      detailRow("Clinician", visit.clinician),
+      detailRow("Location", visit.place),
+      detailRow("Driving", visit.ride),
+      detailRow("Before the visit", visit.note),
+    );
+    panel.append(details);
+    panel.append(
+      routeAction("Prepare visit packet", "Get me ready for the visit", true),
+    );
+    routePane.append(panel);
+    const section = element("section", "view-section");
+    section.append(
+      element("h3", "", "Reschedule the visit"),
+      element(
+        "p",
+        "muted",
+        "Choose the weekday and time. Saving updates the household calendar and records a memory.",
+      ),
+    );
+    const form = element("form", "reschedule-form");
+    form.id = "reschedule-form";
+    const dayLabel = element("label", "", "Weekday");
+    const day = element("select");
+    day.name = "weekday";
+    day.required = true;
+    const placeholder = element("option", "", "Choose a weekday");
+    placeholder.value = "";
+    day.append(placeholder);
+    for (const name of [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ]) {
+      const option = element("option", "", name);
+      option.value = name;
+      day.append(option);
+    }
+    day.value = viewState.weekday;
+    day.addEventListener("change", () => {
+      viewState.weekday = day.value;
+    });
+    dayLabel.append(day);
+    const timeLabel = element("label", "", "Time");
+    const time = element("input");
+    time.name = "time";
+    time.type = "time";
+    time.required = true;
+    time.value = viewState.time;
+    time.addEventListener("input", () => {
+      viewState.time = time.value;
+    });
+    timeLabel.append(time);
+    const submit = element(
+      "button",
+      "primary-button route-action",
+      "Save appointment",
+    );
+    submit.type = "submit";
+    submit.disabled = busy;
+    form.append(dayLabel, timeLabel, submit);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const [hours, minutes] = time.value.split(":").map(Number);
+      send(
+        `Move cardiology to ${day.value} at ${hours % 12 || 12}:${String(minutes).padStart(2, "0")} ${hours >= 12 ? "PM" : "AM"}`,
+      );
+    });
+    section.append(form);
+    routePane.append(section);
+  }
+  if (activeRoute === "supplies") {
+    routePane.append(
+      viewHeading(
+        "Household supplies",
+        "See what’s on hand and review a simulated reorder. Nothing is placed without your confirmation.",
+      ),
+    );
+    const list = element("div", "supply-list");
+    for (const item of household.supplies || []) {
+      const row = element("article", "supply-detail");
+      row.dataset.supplyId = item.id;
+      const visual = element("div", "supply-visual");
+      visual.append(item.id === "briefs" ? thumb("supply-brief") : icon("box"));
+      const copy = element("div", "supply-detail-copy");
+      copy.append(
+        element("h3", "", item.name),
+        element("p", "muted", item.brand),
+        element(
+          "p",
+          `supply-runway ${item.days_left > 7 ? "stocked" : ""}`,
+          `${item.days_left} days left`,
+        ),
+      );
+      const purchase = element("div", "supply-purchase");
+      purchase.append(
+        element("strong", "", item.price),
+        element(
+          "span",
+          "muted",
+          `Arrives ${String(item.arrives).toLowerCase()}`,
+        ),
+        routeAction(
+          "Review reorder",
+          `Order ${item.name}`,
+          item.days_left <= 7,
+        ),
+      );
+      row.append(visual, copy, purchase);
+      list.append(row);
+    }
+    if (!household.supplies?.length)
+      list.append(emptyView("No supplies recorded for this household."));
+    routePane.append(list);
+    routePane.append(
+      element(
+        "p",
+        "view-footnote",
+        "Supply images are representative. Prices and delivery labels come from the simulated household catalogue.",
+      ),
+    );
+  }
+  if (activeRoute === "memory") {
+    routePane.append(
+      viewHeading(
+        "Remembered, together",
+        "Family notes and confirmed changes, with their recorded source and time.",
+      ),
+    );
+    const list = element("ol", "memory-list");
+    const sources = {
+      seed: "Household setup",
+      confirm: "Confirmed action",
+      update: "Calendar update",
+    };
+    for (const memory of household.memories || []) {
+      const row = element("li", "memory-entry");
+      const meta = element("div", "memory-meta");
+      const timestamp = element("time");
+      const date = new Date(memory.created_at);
+      timestamp.dateTime = memory.created_at;
+      timestamp.textContent = Number.isNaN(date.getTime())
+        ? "Time not recorded"
+        : date.toLocaleString([], {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          });
+      meta.append(
+        element(
+          "span",
+          "memory-source",
+          sources[memory.source] || memory.source || "Care record",
+        ),
+        timestamp,
+      );
+      row.append(meta, element("p", "", memory.body));
+      list.append(row);
+    }
+    if (!household.memories?.length)
+      routePane.append(
+        emptyView(
+          "No family notes yet. Confirmed actions and appointment changes will appear here.",
+        ),
+      );
+    else routePane.append(list);
+    routePane.append(
+      element(
+        "p",
+        "view-footnote",
+        "Showing the most recent household notes. These are remembered records, not medical advice.",
+      ),
+    );
+  }
+}
+applyRoute();
 load();

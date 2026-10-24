@@ -84,6 +84,18 @@ class StoreTests(unittest.TestCase):
         self.assertIn("denied", denied)
         self.assertNotIn("executed", denied)
 
+    def test_selected_supply_order_keeps_its_promised_delivery(self):
+        import json
+
+        staged = json.loads(propose_action("order_supply", "strips-local", item_query="Glucose test strips"))
+        self.assertIn("thursday", staged["summary"])
+        done = json.loads(confirm_action("strips-local", staged["confirmation_token"]))
+        self.assertEqual(done["status"], "executed")
+        items = {item["id"]: item for item in store.household()["supplies"]}
+        self.assertEqual(items["strips"]["days_left"], 48)
+        self.assertEqual(items["strips"]["arrives"], "Thursday")
+        self.assertEqual(items["briefs"]["days_left"], 4)
+
     def test_cookie_overlay_keeps_an_order_without_the_database(self):
         token = install(empty())
         try:

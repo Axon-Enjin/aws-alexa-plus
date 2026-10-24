@@ -130,7 +130,7 @@ def _calls(
     if intent == "order":
         return [
             ("check_inventory", {**base, "item_query": utterance}),
-            ("propose_action", {**base, "kind": "order_supply", "session_id": session_id}),
+            ("propose_action", {**base, "kind": "order_supply", "session_id": session_id, "item_query": utterance}),
         ]
     if intent == "inventory":
         return [("check_inventory", {**base, "item_query": utterance})]
@@ -252,7 +252,7 @@ def compose(intent: str, results: dict[str, Any], utterance: str) -> tuple[str, 
         items = inventory.get("items") or []
         item = items[0] if items else None
         if not proposal.get("ok") or item is None:
-            return ("I couldn't stage an order.", [])
+            return (proposal.get("reason", "I couldn't stage an order."), [])
         speech = (
             f"She has {item['days_left']} days of {item['brand']} left. "
             f"The usual box is {item['price']} and arrives {item['arrives'].lower()}. "
@@ -277,7 +277,7 @@ def compose(intent: str, results: dict[str, Any], utterance: str) -> tuple[str, 
                 "title": "Reorder",
                 "body": "I will ask before anything is placed.",
                 "tone": "info",
-                "action": {"label": "Order the usual", "utterance": "Order the usual briefs"},
+                "action": {"label": "Review order", "utterance": f"Order {item['name']}"},
             },
         ]
 
